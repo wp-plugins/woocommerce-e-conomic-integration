@@ -15,16 +15,12 @@ Completely synchronize your WooCommerce Orders, Customers and Products to your e
 == Description ==
 
 WooCommerce e-conomic Integration
-Completely synchronize your WooCommerce Customers to your e-conomic accounting program. For synchronizing Orders and Products get the pro version of this plugin 
-[here] (http://whmcs.onlineforce.net/cart.php?a=add&pid=56&carttpl=flex-web20cart&language=English “Get WooCommerce e-conomic PRO”)
+Completely synchronize your WooCommerce Customers to your e-conomic accounting program. For synchronizing Orders and Products get the pro version of this plugin [here][markdown syntax]
 e-conomic invoices will be automatically created.
 Requires the WooCommerce plugin.
 
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
+[markdown syntax]: http://whmcs.onlineforce.net/cart.php?a=add&pid=56&carttpl=flex-web20cart&language=English
+            "Get WooCommerce e-conomic PRO"
 
 = Data export to e-conomic: =
 
