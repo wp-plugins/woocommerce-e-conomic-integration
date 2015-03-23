@@ -15,7 +15,7 @@ Completely synchronize your WooCommerce Orders, Customers and Products to your e
 == Description ==
 
 WooCommerce e-conomic Integration
-Completely synchronize your WooCommerce Customers to your e-conomic accounting program. For synchronizing Orders and Products get the pro version of this plugin [here][markdown syntax]
+Completely synchronize your WooCommerce Customers to your e-conomic accounting program. For synchronizing Orders and Products get the pro version of this plugin [here][markdown syntax].
 e-conomic invoices will be automatically created.
 Requires the WooCommerce plugin.
 
