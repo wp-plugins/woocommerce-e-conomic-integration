@@ -1,4 +1,4 @@
-=== WooCommerce E-CONOMIC Integration ===
+=== WooCommerce e-conomic Integration ===
 Contributors:      WooConomics
 Plugin Name:       WooCommerce e-conomic Plugin
 Plugin URI:        www.wooconomics.com
