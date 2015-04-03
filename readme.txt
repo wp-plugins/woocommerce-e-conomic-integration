@@ -7,20 +7,17 @@ Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
 Tested up to:      4.1.1
-Stable tag:        1.0
-Version:           1.0
+Stable tag:        1.1
+Version:           1.1
 
 Completely synchronize your WooCommerce Orders, Customers and Products to your e-conomic accounting program.
 
 == Description ==
 
 WooCommerce e-conomic Integration
-Completely synchronize your WooCommerce Customers to your e-conomic accounting program. For synchronizing Orders and Products get the pro version of this plugin [here][markdown syntax].
-e-conomic invoices will be automatically created.
-Requires the WooCommerce plugin.
-
-[markdown syntax]: http://whmcs.onlineforce.net/cart.php?a=add&pid=56&carttpl=flex-web20cart&language=English
-            "Get WooCommerce e-conomic PRO"
+Completely synchronize your WooCommerce Orders, Customers and Products to your e-conomic accounting program.
+e-conomic invoices can be automatically created.
+Requires the WooCommerce plugin. The INVOICE and PRODUCT sync features require a license purchase from onlineforce.net. WooCommerce e-conomic integrtaion Plugin connects to license server hosted at 'http://whmcs.onlineforce.net/' to check the validity of the license key you type in the settings page.
 
 = Data export to e-conomic: =
 
@@ -39,9 +36,6 @@ Requires the WooCommerce plugin.
 	*	Shipping Country
 	*	Shipping City
 	*	Shipping Postcode
-	
-= Data export to e-conomic in Pro version: =
-
 *	PRODUCT/ARTICLE:
 	*	Product name
 	*	ArticleNumber (SKU + product prefix)
@@ -62,13 +56,10 @@ Requires the WooCommerce plugin.
 Features of WooCommerce e-conomic Integration:
 
 1.	Automatic (and manual) sync of all Customers from WooCommerce to e-conomic invoicing service dashboard.
-
-Features of WooCommerce e-conomic Integration in Pro version:
-
-1.	Automatic (and manual) sync of all Orders from WooCommerce to e-conomic invoicing service dashboard. Sync initiated when order status is changed to 'Completed'.
-2.	Automatic (and manual) sync of all products from WooCommerce to e-conomic invoicing service Items. This function also updates products data are modified after initial sync. Supports variable products.
-3.	Manual sync of all Shipping methods (excluding the additional cost for flat_shipping) from WooCommerce to e-conomic invoicing service dashboard.
-4.	Sync Order, Products, Customers to e-conomic when Order status is changed to 'Completed' at WooCommerce->Orders Management section.
+2.	Automatic (and manual) sync of all Orders from WooCommerce to e-conomic invoicing service dashboard. Sync initiated when order status is changed to 'Completed'.
+3.	Automatic (and manual) sync of all products from WooCommerce to e-conomic invoicing service Items. This function also updates products data are modified after initial sync. Supports variable products.
+4.	Manual sync of all Shipping methods (excluding the additional cost for flat_shipping) from WooCommerce to e-conomic invoicing service dashboard.
+5.	Sync Order, Products, Customers to e-conomic when Order status is changed to 'Completed' at WooCommerce->Orders Management section.
 
 == Plugin Requirement ==
 
@@ -79,7 +70,7 @@ Features of WooCommerce e-conomic Integration in Pro version:
 
 1.	Install WooCommerce e-conomic Integration either via the WordPress.org plugin directory, or by uploading the files to your server
 2.	Activate the plugin in your WordPress Admin and go to the admin panel Setting -> WooCommerce e-conomic Integration.
-3.	Active the plugin with your e-conomic API-USER ID, password and account number.
+3.	Active the plugin with your License Key that you have received by mail and your e-conomic API-USER ID.
 4.	Configure your plugin as needed.
 5.	That's it. You're ready to focus on sales, marketing and other cool stuff :-)
 
@@ -100,6 +91,9 @@ Read the FAQ or business hours mail support except weekends and holidays.
 http://wooconomics.com/category/faq/
 
 == Changelog ==
+
+= 1.1 =
+* Improvements & Issue fixes
 
 = 1.0 =
 * Initial Release
