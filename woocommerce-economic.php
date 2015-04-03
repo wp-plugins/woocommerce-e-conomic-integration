@@ -623,7 +623,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$wce_customers = "wce_customers";
 			$wpdb->query ("DROP TABLE ".$wce_orders.";");
 			$wpdb->query ("DROP TABLE ".$wce_customers.";");
-			return true;
 			delete_option('economic-tour');	
 			delete_option('economic_version');
 			delete_option('woocommerce_economic_general_settings');	
