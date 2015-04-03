@@ -1,6 +1,6 @@
 === WooCommerce E-CONOMIC Integration ===
 Contributors:      WooConomics
-Plugin Name:       WooCommerce E-CONOMIC Plugin
+Plugin Name:       WooCommerce e-conomic Plugin
 Plugin URI:        www.wooconomics.com
 Tags:              WooCommerce, Order, E-Commerce, Accounting, Bookkeeping, invoice, invoicing, e-conomic, WooCommerce, order sync, customer sync, product sync, sync, Customers, Integration, woocommerce e-conomic integration, woocommerce integration, economic integration, woocommerceeconomic, wocommerce economic, woocomerce economic, wocomerce economic
 Author URI:        www.wooconomics.com
