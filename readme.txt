@@ -10,17 +10,14 @@ Tested up to:      4.1.1
 Stable tag:        1.1
 Version:           1.1
 
-WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic accounting system. 
-e-conomic invoices can be automatically created. This plugin requires the WooCommerce plugin. 
-The INVOICE and PRODUCT sync features require a license purchase from http://wooconomics.com. 
-WooCommerce e-conomic integration plugin connects to license server hosted at 'http://onlineforce.net' to check the validity of the license key you type in the settings page.
+WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
 == Description ==
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic accounting system. 
 e-conomic invoices can be automatically created. This plugin requires the WooCommerce plugin. 
 The INVOICE and PRODUCT sync features require a license purchase from http://wooconomics.com. 
-WooCommerce e-conomic integration plugin connects to license server hosted at 'http://onlineforce.net' to check the validity of the license key you type in the settings page.
+WooCommerce e-conomic integration plugin connects to license server hosted at http://onlineforce.net to check the validity of the license key you type in the settings page.
 
 = Data export to e-conomic: =
 
