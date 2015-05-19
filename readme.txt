@@ -6,9 +6,9 @@ Tags:              WooCommerce, Order, E-Commerce, Accounting, Bookkeeping, invo
 Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
-Tested up to:      4.1.1
-Stable tag:        1.1
-Version:           1.1
+Tested up to:      4.2.2
+Stable tag:        1.2
+Version:           1.2
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
@@ -91,6 +91,11 @@ Read the FAQ or business hours mail support except weekends and holidays.
 http://wooconomics.com/category/faq/
 
 == Changelog ==
+
+= 1.2 =
+* Option to select between order or invoice created at e-conomic.
+* Plugin authentication method changed to Token access ID and Private App ID.
+* Language support for Svenska, Dansk, Finnish, Norsk bokmål, Deutsche, Français, Polski, English and Español
 
 = 1.1 =
 * Improvements & Issue fixes

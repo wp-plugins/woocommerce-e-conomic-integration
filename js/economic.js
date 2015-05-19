@@ -2,11 +2,11 @@
     jQuery("li.wp-first-item").hide();
 });*/
 
-function sync_orders() {
+function sync_orders(sync_message) {
     var data = {
         action: 'sync_orders'
     };
-    alert('Synkroniseringen kan ta lång tid beroende på hur många ordrar som ska exporteras. \nEtt meddelande visas på denna sida när synkroniseringen är klar. Lämna ej denna sida, då avbryts exporten!');
+    alert(sync_message);
     jQuery(".order_load").show();
     jQuery.ajax({
 		url: ajaxurl,
@@ -19,11 +19,11 @@ function sync_orders() {
 	});
 }
 
-function sync_contacts() {
+function sync_contacts(sync_message) {
     var data = {
         action: 'sync_contacts'
     };
-    alert('Synkroniseringen kan ta lång tid beroende på hur många kunder som ska importeras. \nEtt meddelande visas på denna sida när synkroniseringen är klar. Lämna ej denna sida, då avbryts importen!');
+    alert(sync_message);
     jQuery(".customer_load").show();
     jQuery.ajax({
 		url: ajaxurl,
@@ -36,11 +36,11 @@ function sync_contacts() {
 	});
 }
 
-function sync_products() {
+function sync_products(sync_message) {
     var data = {
         action: 'sync_products'
     };
-    alert('Synkroniseringen kan ta lång tid beroende på hur många produkter som ska exporteras. \nEtt meddelande visas på denna sida när synkroniseringen är klar. Lämna ej denna sida, då avbryts exporten!');
+    alert(sync_message);
 	jQuery(".product_load").show();
 	jQuery.ajax({
 		url: ajaxurl,
@@ -54,11 +54,11 @@ function sync_products() {
 }
 
 
-function sync_shippings() {
+function sync_shippings(sync_message) {
     var data = {
         action: 'sync_shippings'
     };
-    alert('Ett meddelande visas på denna sida när synkroniseringen är klar. Lämna ej denna sida, då avbryts exporten!');
+    alert(sync_message);
 	jQuery(".shipping_load").show();
 	jQuery.ajax({
 		url: ajaxurl,

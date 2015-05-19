@@ -20,8 +20,8 @@ function init_economic_payment() {
 			$this->id = 'economic-invoice';
 			$this->icon	= '';
 			$this->has_fields = false;
-			$this->method_title = "e-conomic Invoice";
-			$this->method_description = "Receive an invoice from e-conomic in no time! An administrative fee of 10SEK will be charged.";
+			$this->method_title = __( 'e-conomic Invoice', 'woocommerce-e-conomic-integration' );
+			$this->method_description = __( 'Receive an invoice from e-conomic in no time!', 'woocommerce-e-conomic-integration' );
 			
 			// Load the settings.
 			$this->init_form_fields();
@@ -47,30 +47,30 @@ function init_economic_payment() {
 	
 			$this->form_fields = array(
 				'enabled' => array(
-					'title'   => __( 'Enable/Disable', 'woocommerce' ),
+					'title'   => __( 'Enable/Disable', 'woocommerce-e-conomic-integration' ),
 					'type'    => 'checkbox',
-					'label'   => __( 'Enable e-conomic Invoice Payment', 'woocommerce' ),
-					'label'   => __( 'Enable e-conomic Invoice Payment', 'woocommerce' ),
-					'default' => 'yes'
+					'label'   => __( 'Enable e-conomic Invoice Payment', 'woocommerce-e-conomic-integration' ),
+					'label'   => __( 'Enable e-conomic Invoice Payment', 'woocommerce-e-conomic-integration' ),
+					'default' => 'no'
 				),
 				'title' => array(
-					'title'       => __( 'Title', 'woocommerce' ),
+					'title'       => __( 'Title', 'woocommerce-e-conomic-integration' ),
 					'type'        => 'text',
-					'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
-					'default'     => __( 'e-conomic Invoice', 'woocommerce' ),
+					'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-e-conomic-integration' ),
+					'default'     => __( 'e-conomic Invoice', 'woocommerce-e-conomic-integration' ),
 					'desc_tip'    => true,
 				),
 				'description' => array(
-					'title'       => __( 'Description', 'woocommerce' ),
+					'title'       => __( 'Description', 'woocommerce-e-conomic-integration' ),
 					'type'        => 'textarea',
-					'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce' ),
-					'default'     => __( 'Receive an invoice from e-conomic in no time! An Administrative fee of 10SEK will be charged.', 'woocommerce' ), //to do make the admin fee a dynamic variable.
+					'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-e-conomic-integration' ),
+					'default'     => __( 'Receive an invoice from e-conomic in no time!', 'woocommerce-e-conomic-integration' ), //to do make the admin fee a dynamic variable.
 					'desc_tip'    => true,
 				),
 				'instructions' => array(
-					'title'       => __( 'Instructions', 'woocommerce' ),
+					'title'       => __( 'Instructions', 'woocommerce-e-conomic-integration' ),
 					'type'        => 'textarea',
-					'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce' ),
+					'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-e-conomic-integration' ),
 					'default'     => 'An e-conomic Invoice will be send from e-conomic, please follow the instructions there!',
 					'desc_tip'    => true,
 				),
@@ -110,7 +110,7 @@ function init_economic_payment() {
 			$order = wc_get_order( $order_id );
 	
 			// Mark as on-hold (we're awaiting the cheque)
-			$order->update_status( 'on-hold', __( 'Awaiting e-conomic Invoice payment', 'woocommerce' ) );
+			$order->update_status( 'on-hold', __( 'Awaiting e-conomic Invoice payment', 'woocommerce-e-conomic-integration' ) );
 	
 			// Reduce stock levels
 			$order->reduce_order_stock();

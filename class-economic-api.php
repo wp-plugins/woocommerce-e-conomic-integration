@@ -13,15 +13,21 @@ class WCE_API{
     public $license_key;
     
     /** @public String Agreement Number */
-    public $agreementNumber;
+    //public $agreementNumber;
 
     /** @public String User Name */
-    public $username;
+    //public $username;
 
     /** @public String Password */
-    public $password;
+    //public $password;
 
-    /** @public String local key data */
+    /** @public String access ID or token */
+    public $token;
+	
+	/** @public String private access ID or appToken */
+    public $appToken;
+	
+	/** @public String local key data */
     public $localkeydata;
 	
 	/** @public Number corresponding the product group */
@@ -85,13 +91,16 @@ class WCE_API{
         $this->api_url = dirname(__FILE__)."/EconomicWebservice.asmx.xml";
 		//$this->api_url = 'https://api.e-conomic.com/secure/api1/EconomicWebservice.asmx?WSDL';
         $this->license_key = $options['license-key'];
-        $this->agreementNumber = $options['agreementNumber'];
-        $this->username = $options['username'];
-        $this->password = $options['password'];
+        //$this->agreementNumber = $options['agreementNumber'];
+        //$this->username = $options['username'];
+        //$this->password = $options['password'];
 		
-		$this->product_group = $options['product-group'];
-		$this->product_offset = $options['product-prefix'];
-		$this->customer_group = $options['customer-group'];
+		$this->token = $options['token'];
+		$this->appToken = $options['appToken'];
+		
+		$this->product_group = isset($options['product-group'])? $options['product-group']: '';
+		$this->product_offset = isset($options['product-prefix'])? $options['product-prefix']: '';
+		$this->customer_group = isset($options['customer-group'])? $options['customer-group']: '';
 		if(isset($options['activate-allsync'])){
 			$this->activate_allsync = $options['activate-allsync'];
 		}
@@ -112,18 +121,17 @@ class WCE_API{
 	
 	  $client = new SoapClient($this->api_url, array("trace" => 1, "exceptions" => 1));
 	
-	  logthis("woo_economic_client loaded agreementNumber: " . $this->agreementNumber . " usernamme: " . $this->username . " and password: ". $this->password);
-	  if (!$this->agreementNumber || !$this->username || !$this->password)
-		die("e-conomic agreementNumber, username, and password are not defined");
+	  logthis("woo_economic_client loaded token: " . $this->token . " appToken: " . $this->appToken);
+	  if (!$this->token || !$this->appToken)
+		die("e-conomic access ID(token), and private access token(appToken) are not defined");
+		
 	  logthis("woo_economic_client - options are OK!");
-	  
 	  logthis("woo_economic_client - creating client...");
 	  	  
 	  try{
-		 $client->Connect(array(
-		'agreementNumber' => $this->agreementNumber,
-		'userName' => $this->username,
-		'password' => $this->password));
+		 $client->ConnectWithToken(array(
+			'token' 	=> $this->token,
+			'appToken'  => $this->appToken));
 	  }
 	  catch (Exception $exception){
 		logthis("Connection to client failed: " . $exception->getMessage());
@@ -192,12 +200,12 @@ class WCE_API{
         //  -- Configuration Values --
         // -----------------------------------
         // Enter the url to your WHMCS installation here
-        //$whmcsurl = 'http://176.10.250.47/whmcs/';
-        $whmcsurl = 'http://whmcs.onlineforce.net/';
+        $whmcsurl = 'http://176.10.250.47/whmcs/';
+        //$whmcsurl = 'http://whmcs.onlineforce.net/';
         // Must match what is specified in the MD5 Hash Verification field
         // of the licensing product that will be used with this check.
-        $licensing_secret_key = 'ak4762';
-        //$licensing_secret_key = 'itservice';
+        //$licensing_secret_key = 'ak4762';
+        $licensing_secret_key = 'itservice';
         // The number of days to wait between performing remote license checks
         $localkeydays = 15;
         // The number of days to allow failover for after local key expiry
@@ -383,24 +391,24 @@ class WCE_API{
      * @param product oject, user object, Soap client object, reference order ID and refund flag.
      * @return bool
      */
-	public function save_order_to_economic(WP_User $user, WC_Order $order, SoapClient &$client, $reference, $refund){
+	public function save_invoice_to_economic(WP_User $user, WC_Order $order, SoapClient &$client, $refund){
 		global $wpdb;
-		logthis("save_order_to_economic Getting debtor handle");
+		logthis("save_invoice_to_economic Getting debtor handle");
 		$debtor_handle = $this->woo_get_debtor_handle_from_economic($user, $client);
 		if (!($debtor_handle)) {
-			logthis("save_order_to_economic debtor not found, can not create invoice");
+			logthis("save_invoice_to_economic debtor not found, can not create invoice");
 			return false;
 		}
 		try {
 		
-			$invoice_number = $this->woo_get_invoice_number_from_economic($client, $reference, $debtor_handle);
+			$invoice_number = $this->woo_get_invoice_number_from_economic($client, $order->id, $debtor_handle);
 			if (!$refund && isset($invoice_number)) {
-				logthis("save_order_to_economic invoice already exists");
+				logthis("save_invoice_to_economic invoice already exists");
 				return true;
 			}
 			
-			$current_invoice_handle = $this->woo_get_current_invoice_from_economic($client, $reference, $debtor_handle);
-			logthis("save_order_to_economic woo_get_current_invoice_from_economic returned current invoice handle.");
+			$current_invoice_handle = $this->woo_get_current_invoice_from_economic($client, $order->id, $debtor_handle);
+			logthis("save_invoice_to_economic woo_get_current_invoice_from_economic returned current invoice handle.");
 			logthis($current_invoice_handle);
 			
 			$countries = new WC_Countries();
@@ -425,32 +433,32 @@ class WCE_API{
 			}
 			
 			
-			logthis("save_order_to_economic CurrentInvoice_SetDeliveryAddress.");
+			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryAddress.");
 			$client->CurrentInvoice_SetDeliveryAddress(array(
 				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
 				'value' => $address
 			));
 			
-			logthis("save_order_to_economic CurrentInvoice_SetDeliveryCity.");
+			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryCity.");
 			$client->CurrentInvoice_SetDeliveryCity(array(
 				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
 				'value' => $city
 			));
 			
-			logthis("save_order_to_economic CurrentInvoice_SetDeliveryPostalCode.");
+			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryPostalCode.");
 			$client->CurrentInvoice_SetDeliveryPostalCode(array(
 				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
 				'value' => $postalcode
 			));
 			
-			logthis("save_order_to_economic CurrentInvoice_SetDeliveryCountry.");
+			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryCountry.");
 			$client->CurrentInvoice_SetDeliveryCountry(array(
 				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
 				'value' => $country
 			));
 			
 			
-			logthis("save_order_to_economic call woo_handle_orderlines_to_economic.");			
+			logthis("save_invoice_to_economic call woo_handle_invoice_lines_to_economic.");			
 			$this->woo_handle_invoice_lines_to_economic($order, $current_invoice_handle, $client, $refund);
 			
 			
@@ -464,7 +472,7 @@ class WCE_API{
 			}
 			return true;
 		} catch (Exception $exception) {
-			logthis("save_order_to_economic could not save order: " . $exception->getMessage());
+			logthis("save_invoice_to_economic could not save order: " . $exception->getMessage());
 			$this->debug_client($client);
 			logthis('Could not create invoice.');
 			logthis($exception->getMessage());
@@ -554,7 +562,7 @@ class WCE_API{
      * @param User object, SOAP client
      * @return debtor_handle object
      */	
-	public function woo_get_invoice_number_from_economic(SoapClient &$client, &$reference, &$debtor_handle){
+	public function woo_get_invoice_number_from_economic(SoapClient &$client, $reference, &$debtor_handle){
 		$handles = $client->Invoice_FindByOtherReference(array(
 			'otherReference' => $reference
 		))->Invoice_FindByOtherReferenceResult;
@@ -589,7 +597,7 @@ class WCE_API{
      * @param User object, SOAP client
      * @return current invoice handle object
      */	
-	public function woo_get_current_invoice_from_economic(SoapClient &$client, &$reference, &$debtor_handle){
+	public function woo_get_current_invoice_from_economic(SoapClient &$client, $reference, &$debtor_handle){
 		$current_invoice_handle = $client->CurrentInvoice_FindByOtherReference(array(
 			'otherReference' => $reference
 		))->CurrentInvoice_FindByOtherReferenceResult;
@@ -722,6 +730,218 @@ class WCE_API{
 	}
 	
 	
+	    /**
+     * Save WooCommerce Order to e-conomic
+     *
+     * @access public
+     * @param product oject, user object, Soap client object, reference order ID and refund flag.
+     * @return bool
+     */
+	public function save_order_to_economic(WP_User $user, WC_Order $order, SoapClient &$client, $refund){
+		global $wpdb;
+		logthis("save_order_to_economic Getting debtor handle");
+		$debtor_handle = $this->woo_get_debtor_handle_from_economic($user, $client);
+		if (!($debtor_handle)) {
+			logthis("save_order_to_economic debtor not found, can not create order");
+			return false;
+		}
+		try {
+		
+			$order_handle = $this->woo_get_order_number_from_economic($client, $order->id, $debtor_handle);
+			if (!$refund && isset($invoice_number)) {
+				logthis("save_order_to_economic order already exists");
+				return true;
+			}
+			
+			$countries = new WC_Countries();
+			
+			$address = null;
+			$city = null;
+			$postalcode = null;
+			$country = null;
+			
+			if (isset($order->shipping_address_1) || !empty($order->shipping_address_1)) {
+				$formatted_state = $countries->states[$order->shipping_country][$order->shipping_state];
+				$address = trim($order->shipping_address_1 . "\n" . $order->shipping_address_2 . "\n" . $formatted_state);
+				$city = $order->shipping_city;
+				$postalcode = $order->shipping_postcode;
+				$country = $countries->countries[$order->shipping_country];
+			} else {
+				$formatted_state = $countries->states[$order->billing_country][$order->billing_state];
+				$address = trim($order->billing_address_1 . "\n" . $order->billing_address_2 . "\n" . $formatted_state);
+				$city = $order->billing_city;
+				$postalcode = $order->billing_postcode;
+				$country = $countries->countries[$order->billing_country];
+			}
+			
+			
+			logthis("save_order_to_economic Order_SetDeliveryAddress.");
+			$client->Order_SetDeliveryAddress(array(
+				'orderHandle' => $order_handle,
+				'value' => $address
+			));
+			
+			logthis("save_order_to_economic Order_SetDeliveryCity.");
+			$client->Order_SetDeliveryCity(array(
+				'orderHandle' => $order_handle,
+				'value' => $city
+			));
+			
+			logthis("save_order_to_economic Order_SetDeliveryPostalCode.");
+			$client->Order_SetDeliveryPostalCode(array(
+				'orderHandle' => $order_handle,
+				'value' => $postalcode
+			));
+			
+			logthis("save_order_to_economic Order_SetDeliveryCountry.");
+			$client->Order_SetDeliveryCountry(array(
+				'orderHandle' => $order_handle,
+				'value' => $country
+			));
+			
+			
+			logthis("save_order_to_economic call woo_handle_order_lines_to_economic.");			
+			$this->woo_handle_order_lines_to_economic($order, $order_handle, $client, $refund);
+			
+			
+			
+			//logthis("SELECT * FROM wce_orders WHERE order_id=".$order->id.": ".$wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";"));
+		
+			if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
+				$wpdb->update ("wce_orders", array('synced' => 1), array('order_id' => $order->id), array('%d'), array('%d'));
+			}else{
+				$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 1), array('%d', '%d'));
+			}
+			return true;
+		} catch (Exception $exception) {
+			logthis("save_order_to_economic could not save order: " . $exception->getMessage());
+			$this->debug_client($client);
+			logthis('Could not create invoice.');
+			logthis($exception->getMessage());
+			if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id." AND synced=0;")){
+				return false;
+			}else{
+				$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 0), array('%d', '%d'));
+				return false;
+			}
+		}
+	}
+
+	
+	/**
+     * Get or Create order number from economic
+     *
+     * @access public
+     * @param User object, SOAP client, debtor_handle
+     */	
+	public function woo_get_order_number_from_economic(SoapClient &$client, $reference, &$debtor_handle){
+		$economic_order = $client->Order_FindByOtherReference(array(
+			'otherReference' => $reference
+		))->Order_FindByOtherReferenceResult;
+		
+	
+		if(isset($economic_order->Id) && !empty($economic_order->Id)){
+			logthis("woo_get_order_number_from_economic orderId " . $economic_order->Id . " exists");
+			return $economic_order;
+		}else{
+			logthis("woo_get_order_number_from_economic order doesn't exists, creating new order!");
+			$economic_order = $client->Order_Create(array(
+				'debtorHandle' => $debtor_handle
+			))->Order_CreateResult;
+			if(isset($economic_order->Id) && !empty($economic_order->Id)){
+				logthis("woo_get_order_number_from_economic orderId " . $economic_order->Id . " created!");
+				$client->Order_SetOtherReference(array(
+					'orderHandle' => $economic_order,
+					'value' => $reference
+				));
+				return $economic_order;
+			}else{
+				logthis("woo_get_order_number_from_economic creating new order failed!");
+				return false;
+			}
+		}
+	}
+
+	
+	
+	/**
+     * Get order lines handle
+     *
+     * @access public
+     * @param Order object, Invoice handle object, SOAP client, refund bool
+     * @return debtor_handle object
+     */	
+	public function woo_handle_order_lines_to_economic(WC_Order $order, $order_handle, SoapClient &$client, $refund){
+	  logthis("woo_handle_order_lines_to_economic - get all lines");
+	
+	  foreach ($order->get_items() as $item) {
+		$product = $order->get_product_from_item($item);
+		//$line = $lines[$this->woo_get_product_sku($product)];
+		$order_line_handle = null;
+		$order_line_handle = $this->woo_create_orderline_handle_at_economic($order_handle, $this->woo_get_product_sku($product), $client);
+	
+		logthis("woo_handle_order_lines_to_economic updating qty on id: " . $order_line_handle->Id . " number: " . $order_line_handle->Number);
+		$quantity = ($refund) ? $item['qty'] * -1 : $item['qty'];
+		$client->OrderLine_SetQuantity(array(
+		  'orderLineHandle' => $order_line_handle,
+		  'value' => $quantity
+		));
+		logthis("woo_handle_order_lines_to_economic updated line");
+	  }
+	  
+	    $shippingItem = reset($order->get_items('shipping'));
+		//logthis($shippingItem['method_id']);
+		if(isset($shippingItem['method_id'])){
+			logthis("woo_handle_order_lines_to_economic adding Shipping line");
+			$order_line_handle = null;
+			$order_line_handle = $this->woo_create_orderline_handle_at_economic($order_handle, $shippingItem['method_id'], $client);
+			logthis("woo_handle_order_lines_to_economic updating qty on id: " . $order_line_handle->Id . " number: " . $order_line_handle->Number);
+			$quantity = ($refund) ? $item['qty'] * -1 : 1;
+			$client->OrderLine_SetQuantity(array(
+			'orderLineHandle' => $order_line_handle,
+			'value' => $quantity
+			));
+			logthis("woo_handle_order_lines_to_economic updated shipping line");
+		}
+	}
+	
+	
+	/**
+     * Get order lines to e-conomic 
+     *
+     * @access public
+     * @param 
+     * @return array log
+     */
+	public function woo_create_orderline_handle_at_economic($order_handle, $product_id, SoapClient &$client){
+		$orderline_handle = $client->OrderLine_Create(array(
+			'orderHandle' => $order_handle
+		))->OrderLine_CreateResult;
+		logthis("woo_create_orderline_handle_at_economic added line id: " . $orderline_handle->Id . " number: " . $orderline_handle->Number . " product_id: " . $product_id);
+		$product_handle = $client->Product_FindByNumber(array(
+			'number' => $product_id
+		))->Product_FindByNumberResult;
+		$client->OrderLine_SetProduct(array(
+			'orderLineHandle' => $orderline_handle,
+			'valueHandle' => $product_handle
+		));
+		$product = $client->Product_GetData(array(
+			'entityHandle' => $product_handle
+		))->Product_GetDataResult;
+		$client->OrderLine_SetDescription(array(
+			'orderLineHandle' => $orderline_handle,
+			'value' => $product->Name
+		));
+		$client->OrderLine_SetUnitNetPrice(array(
+			'orderLineHandle' => $orderline_handle,
+			'value' => $product->SalesPrice
+		));
+		
+		logthis("woo_create_orderline_handle_at_economic added product to line ");
+		return $orderline_handle;
+	}
+	
+	
 	/**
      * Sync WooCommerce orders to e-conomic 
      *
@@ -731,6 +951,7 @@ class WCE_API{
      */
 	public function sync_orders(){
 		global $wpdb;
+		$options = get_option('woocommerce_economic_general_settings');
 		$client = $this->woo_economic_client();
 		if(!$client){
 			$sync_log[0] = false;
@@ -754,20 +975,29 @@ class WCE_API{
 				$user = new WP_User($order->user_id);
 				if($order->payment_method != 'economic-invoice'){
 					if($this->activate_allsync != "on"){
-						array_push($sync_log, array('status' => 'success', 'order_id' => $order->id, 'msg' => 'Order not synced, because not an e-conomic order! Check "Aktivera alla beställningar synkning" to sync all order.' ));
+						array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Order not synced, because not an e-conomic order! Check "Aktivera alla beställningar synkning" to sync all order.', 'woocommerce-e-conomic-integration') ));
 						continue; //Check if the payment is not e-conomic and all order sync is active, if not breaks this iterationa and continue with other orders.
 					}
 				}
-				if($this->save_order_to_economic($user, $order, $client, $order->id)){
-					array_push($sync_log, array('status' => 'success', 'order_id' => $order->id, 'msg' => 'Order synced successfully' ));
+				if($options['sync-order-invoice'] == 'invoice'){
+					if($this->save_invoice_to_economic($user, $order, $client, $order->id)){
+						array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Order synced successfully' ), 'woocommerce-e-conomic-integration'));
+					}else{
+						$sync_log[0] = false;
+						array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Sync failed, please try again later!' , 'woocommerce-e-conomic-integration')));
+					}
 				}else{
-					$sync_log[0] = false;
-					array_push($sync_log, array('status' => 'fail', 'order_id' => $order->id, 'msg' => 'Sync failed, please try again later!' ));
+					if($this->save_order_to_economic($user, $order, $client, $order->id)){
+						array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Order synced successfully', 'woocommerce-e-conomic-integration') ));
+					}else{
+						$sync_log[0] = false;
+						array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Sync failed, please try again later!' , 'woocommerce-e-conomic-integration')));
+					}
 				}
 			}
 		}else{
 			$sync_log[0] = true;
-			array_push($sync_log, array('status' => 'success', 'order_id' => '', 'msg' => 'All orders were already synced!' ));
+			array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'order_id' => '', 'msg' => __('All orders were already synced!', 'woocommerce-e-conomic-integration') ));
 		}
 		
 		$client->Disconnect();
@@ -899,22 +1129,22 @@ class WCE_API{
 			$title = $product->get_title();
 			if (isset($product->sku) && !empty($product->sku) && isset($title) && !empty($title)) {
 				if($this->save_product_to_economic($product, $client)){
-					array_push($sync_log, array('status' => 'success', 'sku' => $product->sku, 'name' => $product->get_title(), 'msg' => 'Product synced successfully' ));
+					array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'sku' => $product->sku, 'name' => $product->get_title(), 'msg' => __('Product synced successfully', 'woocommerce-e-conomic-integration') ));
 				}else{
 					$sync_log[0] = false;
-					array_push($sync_log, array('status' => 'fail', 'sku' => $product->sku, 'name' => $product->get_title(), 'msg' => 'Product not synced, please try again!' ));
+					array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'sku' => $product->sku, 'name' => $product->get_title(), 'msg' => __('Product not synced, please try again!', 'woocommerce-e-conomic-integration') ));
 				}
 			} else {
 				logthis("Could not sync product: '". $product->get_title() ."' and id: '".$product->id."' to e-conomic. Please update it with:");
 				if (!isset($product->sku) || empty($product->sku)){
 				  logthis("SKU");
 				  $sync_log[0] = false;
-				  array_push($sync_log, array('status' => 'fail', 'sku' => '', 'name' => $product->get_title(), 'msg' => 'Product not synced, SKU is empty!' ));
+				  array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'sku' => '', 'name' => $product->get_title(), 'msg' => __('Product not synced, SKU is empty!', 'woocommerce-e-conomic-integration') ));
 				}
 				if (!isset($title) || empty($title)){
 				  logthis("Title");
 				  $sync_log[0] = false;
-				  array_push($sync_log, array('status' => 'fail', 'sku' => $product->sku, 'name' => '', 'msg' => 'Product not synced, product title is empty!' ));
+				  array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'sku' => $product->sku, 'name' => '', 'msg' => __('Product not synced, product title is empty!', 'woocommerce-e-conomic-integration') ));
 				}
 			}
 		}
@@ -1156,7 +1386,7 @@ class WCE_API{
 		$client = $this->woo_economic_client();
 		if(!$client){
 			$sync_log[0] = false;
-			array_push($sync_log, array('status' => 'fail', 'msg' => 'Could not create e-conomic client, please try again later!' ));
+			array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'msg' => __('Could not create e-conomic client, please try again later!', 'woocommerce-e-conomic-integration') ));
 			return $sync_log;
 		}
 		$users = array();
@@ -1182,15 +1412,15 @@ class WCE_API{
 			foreach ($users as $user) {
 				logthis('sync_contacts User ID: ' . $user->ID);
 				if($this->save_customer_to_economic($user, $client)){
-					array_push($sync_log, array('status' => 'success', 'user_id' => $user->ID, 'msg' => 'Customer synced successfully' ));
+					array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'user_id' => $user->ID, 'msg' => __('Customer synced successfully', 'woocommerce-e-conomic-integration') ));
 				}else{
 					$sync_log[0] = false;
-					array_push($sync_log, array('status' => 'fail', 'user_id' => $user->ID, 'msg' => 'Sync failed, please try again later!' ));
+					array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'user_id' => $user->ID, 'msg' => __('Sync failed, please try again later!', 'woocommerce-e-conomic-integration') ));
 				}
 			}
 		}else{
 			$sync_log[0] = true;
-			array_push($sync_log, array('status' => 'success', 'user_id' => '', 'msg' => 'All customers were already synced!' ));
+			array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'user_id' => '', 'msg' => __('All customers were already synced!', 'woocommerce-e-conomic-integration') ));
 		}
 
 		$client->Disconnect();
@@ -1298,7 +1528,7 @@ class WCE_API{
 		$client = $this->woo_economic_client();
 		if(!$client){
 			$sync_log[0] = false;
-			array_push($sync_log, array('status' => 'fail', 'msg' => 'Could not create e-conomic client, please try again later!' ));
+			array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'msg' => __('Could not create e-conomic client, please try again later!', 'woocommerce-e-conomic-integration') ));
 			return $sync_log;
 		}
 		$sync_log = array();
@@ -1312,16 +1542,31 @@ class WCE_API{
 			logthis('Shipping Title: '. $shippingMethodObject->settings['title']);
 			$title = $shippingMethodObject->settings['title'];
 			if($this->save_shipping_to_economic($shippingMethodObject, $client)){
-				array_push($sync_log, array('status' => 'success', 'sku' => $shippingMethodObject->id, 'name' => $shippingMethodObject->settings['title'], 'msg' => 'Shipping synced successfully' ));
+				array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'sku' => $shippingMethodObject->id, 'name' => $shippingMethodObject->settings['title'], 'msg' => __('Shipping synced successfully', 'woocommerce-e-conomic-integration') ));
 			}else{
 				$sync_log[0] = false;
-				array_push($sync_log, array('status' => 'fail', 'sku' => $shippingMethodObject->id, 'name' => $shippingMethodObject->settings['title'], 'msg' => 'Shipping not synced, please try again!' ));
+				array_push($sync_log, array('status' => __('fail', 'woocommerce-e-conomic-integration'), 'sku' => $shippingMethodObject->id, 'name' => $shippingMethodObject->settings['title'], 'msg' => __('Shipping not synced, please try again!', 'woocommerce-e-conomic-integration') ));
 			}
 		}
 		
 		$client->Disconnect();
 		logthis("sync_shippings ending...");
 		return $sync_log;
+	}
+	
+	
+	/**
+     * Send inovice of an order from e-conomic to customers
+     *
+     * @access public
+     * @param user object, order object, e-conomic client
+     * @return array log
+     */
+	public function send_invoice_economic($user, $order, SoapClient &$client){
+		/*$invoice_handle = $client->Invoice_FindByOtherReference(array(
+			'otherReference' => $order->id
+		))->Invoice_FindByOtherReferenceResult;*/
+		return false;
 	}
 
 }
