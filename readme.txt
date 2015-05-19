@@ -93,7 +93,7 @@ http://wooconomics.com/category/faq/
 == Changelog ==
 
 = 1.2 =
-* Option to select between order or invoice added.
+* Option to select between order or invoice created at e-conomic.
 * Plugin authentication method changed to Token access ID and Private App ID.
 * Language support for Svenska, Dansk, Finnish, Norsk bokmål, Deutsche, Français, Polski, English and Español
 
