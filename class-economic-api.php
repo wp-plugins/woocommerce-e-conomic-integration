@@ -153,11 +153,13 @@ class WCE_API{
 	  if (is_null($client)) {
 		logthis("Client is null");
 	  } else {
-		logthis("------------");
+		logthis("-----LastRequestHeaders-------");
 		logthis($client->__getLastRequestHeaders());
-		logthis("------------");
+		logthis("------LastRequest------");
 		logthis($client->__getLastRequest());
-		logthis("------------");
+		logthis("------LastResponse------");
+		logthis($client->__getLastResponse());
+		logthis("------Debugging ends------");
 	  }
 	}
 
@@ -401,7 +403,7 @@ class WCE_API{
 		}
 		try {
 		
-			$invoice_number = $this->woo_get_invoice_number_from_economic($client, $order->id, $debtor_handle);
+			$invoice_number = $this->woo_get_invoice_number_from_economic($client, $order->id);
 			if (!$refund && isset($invoice_number)) {
 				logthis("save_invoice_to_economic invoice already exists");
 				return true;
@@ -562,7 +564,7 @@ class WCE_API{
      * @param User object, SOAP client
      * @return debtor_handle object
      */	
-	public function woo_get_invoice_number_from_economic(SoapClient &$client, $reference, &$debtor_handle){
+	public function woo_get_invoice_number_from_economic(SoapClient &$client, $reference){
 		$handles = $client->Invoice_FindByOtherReference(array(
 			'otherReference' => $reference
 		))->Invoice_FindByOtherReferenceResult;
@@ -979,7 +981,7 @@ class WCE_API{
 						continue; //Check if the payment is not e-conomic and all order sync is active, if not breaks this iterationa and continue with other orders.
 					}
 				}
-				if($options['sync-order-invoice'] == 'invoice'){
+				if($options['sync-order-invoice'] == 'invoice' || $order->payment_method == 'economic-invoice'){
 					if($this->save_invoice_to_economic($user, $order, $client, $order->id)){
 						array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'order_id' => $order->id, 'msg' => __('Order synced successfully' ), 'woocommerce-e-conomic-integration'));
 					}else{
@@ -1025,23 +1027,31 @@ class WCE_API{
 			logthis("save_product_to_economic - trying to find product in economic with product number: ".$product_sku);
 			
 			// Find product by number
+			logthis('Finding product by number: '.$product_sku);
 			$product_handle = $client->Product_FindByNumber(array(
-			'number' => $product_sku))->Product_FindByNumberResult;
+				'number' => $product_sku
+			))->Product_FindByNumberResult;
 			
 			// Create product with name
 			if (!$product_handle) {
 				$productGroupHandle = $client->ProductGroup_FindByNumber(array(
-				'number' => $this->product_group))->ProductGroup_FindByNumberResult;
+					'number' => $this->product_group
+				))->ProductGroup_FindByNumberResult;
 				$product_handle = $client->Product_Create(array(
-				'number' => $product_sku,
-				'productGroupHandle' => $productGroupHandle,
-				'name' => $product->get_title()))->Product_CreateResult;
+					'number' => $product_sku,
+					'productGroupHandle' => $productGroupHandle,
+					'name' => $product->get_title()
+				))->Product_CreateResult;
 				logthis("save_product_to_economic - product created:" . $product->get_title());
 			}
 			
 			// Get product data
 			$product_data = $client->Product_GetData(array(
-			'entityHandle' => $product_handle))->Product_GetDataResult;
+				'entityHandle' => $product_handle
+			))->Product_GetDataResult;
+			
+			logthis('--product_handle--');
+			logthis($product_handle);
 			
 			//logthis($product_data->DepartmentHandle);
 			//logthis($product_data->DistrubutionKeyHandle);
@@ -1063,8 +1073,8 @@ class WCE_API{
 			),
 			'IsAccessible' => true,
 			'Volume' => $product_data->Volume,
-			'DepartmentHandle' => $product_data->DepartmentHandle,
-			'DistributionKeyHandle' => $product_data->DistrubutionKeyHandle,
+			//'DepartmentHandle' => isset($product_data->DepartmentHandle) ? $product_data->DepartmentHandle : '',
+			//'DistributionKeyHandle' => isset($product_data->DistrubutionKeyHandle) ? $product_data->DistrubutionKeyHandle : '',
 			'InStock' => $product_data->InStock,
 			'OnOrder' => $product_data->OnOrder,
 			'Ordered' => $product_data->Ordered,
@@ -1225,8 +1235,7 @@ class WCE_API{
      * @return customer id concatenated with customer offest string.
      */
 	public function woo_get_customer_id(WP_User $user){
-	  $customer_offset = $this->customer_offset;
-	  $customer_id = $customer_offset.$user->ID;
+	  $customer_id = $user->ID;
 	  logthis("woo_get_customer_id id: " . $customer_id);
 	  return $customer_id;
 	}
@@ -1276,10 +1285,9 @@ class WCE_API{
 			  $adr2 = ($meta_key == 'billing_address_2') ? $meta_value : $user->get('billing_address_2');
 			  $state = ($meta_key == 'billing_state') ? $meta_value : $user->get('billing_state');
 			  $billing_country = $user->get('billing_country');
-			  $countries = new WC_Countries();
-		
+			  $countries = new WC_Countries();		
 			  $formatted_state = (isset($state)) ? $countries->states[$billing_country][$state] : "";
-			  $formatted_adr = trim("$adr1\n$adr2\n$formatted_state");
+			  $formatted_adr = trim($adr1."\n".$adr2."\n".$formatted_state);
 			  logthis("woo_save_customer_meta_data_to_economic adr1: " . $adr1 . " adr2: " . $adr2 . " state " . $formatted_state);
 			  logthis("woo_save_customer_meta_data_to_economic formatted_adr: " . $formatted_adr);
 			  $client->Debtor_SetAddress(array(
@@ -1560,13 +1568,95 @@ class WCE_API{
      *
      * @access public
      * @param user object, order object, e-conomic client
-     * @return array log
+     * @return boolean
      */
 	public function send_invoice_economic($user, $order, SoapClient &$client){
-		/*$invoice_handle = $client->Invoice_FindByOtherReference(array(
-			'otherReference' => $order->id
-		))->Invoice_FindByOtherReferenceResult;*/
-		return false;
+		try{
+			$current_invoice_handle = $client->CurrentInvoice_FindByOtherReference(array(
+				'otherReference' => $order->id
+			))->CurrentInvoice_FindByOtherReferenceResult;
+			
+			logthis('send_invoice_economic CurrentInvoiceHandleId:'. $current_invoice_handle->CurrentInvoiceHandle->Id);
+			logthis($current_invoice_handle);
+			
+			logthis('send_invoice_economic book invoice');
+			
+			$invoice = $client->CurrentInvoice_Book(array(
+				'currentInvoiceHandle' => $current_invoice_handle->CurrentInvoiceHandle
+			))->CurrentInvoice_BookResult;
+			
+			logthis('send_invoice_economic invoice: '. $invoice->Number);
+			logthis($invoice);
+			
+			$pdf_invoice = $client->Invoice_GetPdf(array(
+				'invoiceHandle' => $invoice
+			))->Invoice_GetPdfResult;
+			
+			//logthis('send_invoice_economic pdf_base64_data:');
+			//logthis($pdf_invoice);
+			
+			logthis('send_invoice_economic Creating PDF invoice');
+			$filename = 'ord_'.$order->id.'-inv_'.$invoice->Number.'.pdf';
+			$path = dirname(__FILE__).'/invoices/';
+			$file = $path.$filename;
+			if(!file_exists($file)){
+				$fileobject = fopen($file, 'w');
+			}
+			fwrite ($fileobject, $pdf_invoice);
+			fclose ($fileobject);
+			logthis('send_invoice_economic Invoice '.$file.' is created');
+			
+			$to = $order->billing_email;
+			$orderDate = explode(' ', $order->order_date);
+			$subject = get_bloginfo( $name ).' - Invoice no. '.$invoice->Number.' - '.$orderDate[0];
+			$body = '';
+			/*$random_hash = md5(date('r', time())); 
+			//$headers = 'Content-Type: text/html; charset=UTF-8';
+			//$headers. = 'From: '.get_bloginfo( 'name' ).' <'.get_bloginfo( 'admin_email' ).'>';
+			
+			$headers = "MIME-Version: 1.0" . "\r\n";
+			//$headers .= "Content-Type: text/html; charset=UTF-8" . "\r\n";
+			$headers .= "Content-Type: multipart/mixed; boundary=\"PHP-mixed-".$random_hash."\""; 
+			$headers .= "From: ".get_bloginfo( 'name' )." <"..">"."\r\n";
+		
+			//logthis('To: '.$to.'/n Subject: '.$subject.'/n Headers: '.$headers);*/
+			
+			return $this->mail_attachment($filename, $path, $to, get_bloginfo( 'admin_email' ), get_bloginfo( 'name' ), get_bloginfo( 'admin_email' ), $subject, $body );
+			
+		}catch (Exception $exception) {
+			logthis($exception->getMessage);
+			$this->debug_client($client);
+			return false;
+		}
+	}
+	
+	public function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $replyto, $subject, $message) {
+		$file = $path.$filename;
+		$file_size = filesize($file);
+		//logthis('file_size: '.$file_size);
+		$handle = fopen($file, "r");
+		$content = fread($handle, $file_size);
+		//logthis('content: '.$content);
+		fclose($handle);
+		$content = chunk_split(base64_encode($content));
+		$uid = md5(uniqid(time()));
+		$name = basename($file);
+		$header = "From: ".$from_name." <".$from_mail.">\r\n";
+		$header .= "Reply-To: ".$replyto."\r\n";
+		$header .= "MIME-Version: 1.0\r\n";
+		$header .= "Content-Type: multipart/mixed; boundary=\"".$uid."\"\r\n\r\n";
+		$header .= "This is a multi-part message in MIME format.\r\n";
+		$header .= "--".$uid."\r\n";
+		$header .= "Content-type:text/plain; charset=iso-8859-1\r\n";
+		$header .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+		$header .= $message."\r\n\r\n";
+		$header .= "--".$uid."\r\n";
+		$header .= "Content-Type: application/octet-stream; name=\"".$filename."\"\r\n"; // use different content types here
+		$header .= "Content-Transfer-Encoding: base64\r\n";
+		$header .= "Content-Disposition: attachment; filename=\"".$filename."\"\r\n\r\n";
+		$header .= $content."\r\n\r\n";
+		$header .= "--".$uid."--";
+		return mail($mailto, $subject, "", $header);
 	}
 
 }

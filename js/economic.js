@@ -12,7 +12,8 @@ function sync_orders(sync_message) {
 		url: ajaxurl,
 		data: data,
 		dataType: "json",
-	}).done(function(data) {
+	}).always(function(data) {
+		alert(JSON.stringify(data));
 		alert(data.status);
 		jQuery("#result").html(data.msg);
 		jQuery(".order_load").hide();
@@ -29,7 +30,7 @@ function sync_contacts(sync_message) {
 		url: ajaxurl,
 		data: data,
 		dataType: "json",
-	}).done(function(data) {
+	}).always(function(data) {
 		alert(data.status);
 		jQuery("#result").html(data.msg);
 		jQuery(".customer_load").hide();
@@ -64,7 +65,7 @@ function sync_shippings(sync_message) {
 		url: ajaxurl,
 		data: data,
 		dataType: "json",
-	}).done(function(data) {
+	}).always(function(data) {
 		alert(data.status);
 		jQuery("#result").html(data.msg);
 		jQuery(".shipping_load").hide();

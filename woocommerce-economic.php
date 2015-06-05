@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-economic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.2
+ * Version: 1.3
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -420,7 +420,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					}
 				}
 				$client = $wce_api->woo_economic_client();
-				if($options['sync-order-invoice'] == 'invoice'){
+				if($options['sync-order-invoice'] == 'invoice' || $order->payment_method == 'economic-invoice'){
 					if($wce_api->save_invoice_to_economic($user, $order, $client, false)){
 						logthis("woo_save_invoice_to_economic order: " . $order_id . " is synced with economic");
 					}
@@ -445,9 +445,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}*/
 			}catch (Exception $exception) {
 				logthis("woocommerce_order_status_completed could not sync: " . $exception->getMessage());
-				$this->debug_client($client);
+				$wce_api->debug_client($client);
 				logthis($exception->getMessage);
-				$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
+				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order_id." AND synced=0;")){
+					return false;
+				}else{
+					$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
+					return false;
+				}
 				return false;
 			}
 		}
@@ -510,7 +515,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 								}
 							}
 						}
-						if($options['sync-order-invoice'] == 'invoice'){
+						if($options['sync-order-invoice'] == 'invoice' || $order->payment_method == 'economic-invoice'){
 							if($wce_api->save_invoice_to_economic($user, $order, $client, false)){
 								logthis("woo_save_invoice_to_economic order: " . $order_id . " is synced with economic.");
 							}
@@ -520,6 +525,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							if($order->payment_method == 'economic-invoice'){
 								if($wce_api->send_invoice_economic($user, $order, $client)){
 									logthis("woo_save_invoice_to_economic invoice for order: " . $order_id . " is sent to customer.");
+								}else{
+									logthis("woo_save_invoice_to_economic invoice for order: " . $order_id . " sending failed!");
 								}
 							}
 						}else{
@@ -537,10 +544,20 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 			}catch (Exception $exception) {
 				logthis("woo_save_customer_to_economic could not sync user/order: " . $exception->getMessage());
-				$this->debug_client($client);
+				$wce_api->debug_client($client);
 				logthis($exception->getMessage);
-				$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
-				$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'synced' => 0), array('%d', '%s', '%d'));
+				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order_id." AND synced=0;")){
+					return false;
+				}else{
+					$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
+					return false;
+				}
+				if($wpdb->query ("SELECT * FROM wce_customers WHERE ordeuser_idr_id=".$user->ID." AND synced=0;")){
+					return false;
+				}else{
+					$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'synced' => 0), array('%d', '%s', '%d'));
+					return false;
+				}
 				return false;
 			}
 		}
@@ -633,7 +650,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', '1.2');
+			update_option('economic_version', '1.3');
 		}
 		
 		/**
@@ -664,10 +681,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			global $wpdb;
 			$table_name = "wce_orders";
 			$economic_version = get_option('economic_version');
-			if($economic_version != '' && floatval($economic_version) < 1.2 ){
+			if($economic_version != '' && floatval($economic_version) < 1.3 ){
 				
 			}
-			update_option('economic_version', '1.2');
+			update_option('economic_version', '1.3');
 		}
 		
 		//add_action( 'plugins_loaded', 'economic_update' );
@@ -836,8 +853,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 ?>
                 <select <?php echo isset($args['id'])? 'id="'.$args['id'].'"':''; ?> name="<?php echo $args['tab_key']; ?>[<?php echo $args['key']; ?>]">
-                	<option <?php echo $str1; ?> value='invoice'><?php echo __('Create invoice', 'woocommerce-e-conomic-integration'); ?></option>
-                    <option <?php echo $str2; ?> value='order'><?php echo __('Create order', 'woocommerce-e-conomic-integration'); ?></option>
+                	<option <?php echo $str1; ?> value='invoice'><?php _e('Create invoice', 'woocommerce-e-conomic-integration'); ?></option>
+                    <option <?php echo $str2; ?> value='order'><?php _e('Create order', 'woocommerce-e-conomic-integration'); ?></option>
                 </select>
                 <span><i><?php echo $args['desc']; ?></i></span>
             <?php
@@ -856,7 +873,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$wce_api = new WCE_API();
 				$client = $wce_api->woo_economic_client();
 				if(!$client){
-					echo "<span><i>e-conomic client not loaded properly, please refresh the page to load properly.</i></span>";
+					_e('<span><i>e-conomic client not loaded properly, please refresh the page to load properly.</i></span>', 'woocommerce-e-conomic-integration');
 					return false;
 				}
 				if($args['key'] == 'product-group')
