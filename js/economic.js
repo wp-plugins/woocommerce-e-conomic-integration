@@ -13,7 +13,6 @@ function sync_orders(sync_message) {
 		data: data,
 		dataType: "json",
 	}).always(function(data) {
-		alert(JSON.stringify(data));
 		alert(data.status);
 		jQuery("#result").html(data.msg);
 		jQuery(".order_load").hide();
