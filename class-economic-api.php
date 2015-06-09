@@ -96,7 +96,7 @@ class WCE_API{
         //$this->password = $options['password'];
 		
 		$this->token = $options['token'];
-		$this->appToken = $options['appToken'];
+		$this->appToken = '15MjebGLGLPv4_I90Wy8EqzcXwThPmrY5iRNlG0H3_w1';
 		
 		$this->product_group = isset($options['product-group'])? $options['product-group']: '';
 		$this->product_offset = isset($options['product-prefix'])? $options['product-prefix']: '';
@@ -123,7 +123,7 @@ class WCE_API{
 	
 	  logthis("woo_economic_client loaded token: " . $this->token . " appToken: " . $this->appToken);
 	  if (!$this->token || !$this->appToken)
-		die("e-conomic access ID(token), and private access token(appToken) are not defined");
+		die("e-conomic Access Token not defined!");
 		
 	  logthis("woo_economic_client - options are OK!");
 	  logthis("woo_economic_client - creating client...");

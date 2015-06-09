@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-economic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.3
+ * Version: 1.4
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -200,7 +200,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$message .= '<tr><td align="right" colspan="1"><strong>Allmänna inställningar</strong></td></tr>';
 				$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.$options['license-key'].'</td></tr>';
 				$message .= '<tr><td align="right">Token ID: </td><td align="left">'.$options['token'].'</td></tr>';
-				$message .= '<tr><td align="right">Private app ID: </td><td align="left">'.$options['appToken'].'</td></tr>';
+				//$message .= '<tr><td align="right">Private app ID: </td><td align="left">'.$options['appToken'].'</td></tr>';
 				//$message .= '<tr><td align="right">Avtalsnr.: </td><td align="left">'.$options['agreementNumber'].'</td></tr>';
 				//$message .= '<tr><td align="right">Användar-ID: </td><td align="left">'.$options['username'].'</td></tr>';
 				//$message .= '<tr><td align="right">Lösenord: </td><td align="left">'.$options['password'].'</td></tr>';
@@ -650,7 +650,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', '1.3');
+			update_option('economic_version', '1.4');
 		}
 		
 		/**
@@ -681,10 +681,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			global $wpdb;
 			$table_name = "wce_orders";
 			$economic_version = get_option('economic_version');
-			if($economic_version != '' && floatval($economic_version) < 1.3 ){
+			if($economic_version != '' && floatval($economic_version) < 1.4 ){
 				
 			}
-			update_option('economic_version', '1.3');
+			update_option('economic_version', '1.4');
 		}
 		
 		//add_action( 'plugins_loaded', 'economic_update' );
@@ -792,9 +792,20 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             function field_option_text($args) {
                 $options = get_option($args['tab_key']);
                 $val = '';
-                if(isset($options[$args['key']] )){
+                if(isset($options[$args['key']])){
                     $val = esc_attr( $options[$args['key']] );
                 }
+				if($args['key'] == 'token' &&  (!isset($options[$args['key']]) || $options[$args['key']]=='')){
+					if(isset($_GET['token'])){
+						$val = $_GET['token'];
+						if((!isset($options[$args['key']]) || $options[$args['key']]=='')){
+							$args['desc'] .= __(' Please save the settings before leaving this page!', 'woocommerce-e-conomic-integration');
+						}
+					}else{
+						$args['desc'] .= '<a href="https://secure.e-conomic.com/secure/api1/requestaccess.aspx?appId=LS4emZLGHCD_itL9OvgLbp1CvGCeeh0kE7f_v3L7fdU1&redirectUrl='.urlencode(admin_url().'admin.php?page=woocommerce_economic_options&tab=woocommerce_economic_general_settings').'" class="button button-primary" title="" style="margin-left:5px">'.__(' Click here to generate token access ID', 'woocommerce-e-conomic-integration').'</a>';
+					}
+					
+				}
                 ?>
                 <input <?php echo isset($args['id'])? 'id="'.$args['id'].'"': ''; ?> type="text" name="<?php echo $args['tab_key']; ?>[<?php echo $args['key']; ?>]" value="<?php echo $val; ?>" />
                 <span><i><?php echo $args['desc']; ?></i></span>
@@ -974,11 +985,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 register_setting( $this->general_settings_key, $this->general_settings_key );
                 add_settings_section( 'section_general', __('General settings', 'woocommerce-e-conomic-integration'), array( &$this, 'section_general_desc' ), $this->general_settings_key );
-                add_settings_field( 'woocommerce-economic-license-key', __('License key', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'license-key', 'tab_key' => $this->general_settings_key, 'key' => 'license-key', 'desc' => __('This is the License key you received from us by mail.', 'woocommerce-e-conomic-integration')) );
 				
 				add_settings_field( 'woocommerce-economic-token', __('Token ID', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text'), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'token', 'desc' => __('Token access ID from e-conomic.', 'woocommerce-e-conomic-integration')) );
 				
-				add_settings_field( 'woocommerce-economic-appToken', __('Private app ID', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text'), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'appToken', 'desc' => __('Private app ID from e-conomic.', 'woocommerce-e-conomic-integration')) );
+                add_settings_field( 'woocommerce-economic-license-key', __('License key', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'license-key', 'tab_key' => $this->general_settings_key, 'key' => 'license-key', 'desc' => __('This is the License key you received from us by mail.', 'woocommerce-e-conomic-integration')) );
+				
+				//add_settings_field( 'woocommerce-economic-appToken', __('Private app ID', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text'), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'appToken', 'desc' => __('Private app ID from e-conomic.', 'woocommerce-e-conomic-integration')) );
 				
 				//add_settings_field( 'woocommerce-economic-agreementNumber', 'Avtalsnr.', array( &$this, 'field_option_text'), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'agreementNumber', 'desc' => 'Här anges din avtalsnr. från e-conomic.') );
 				
