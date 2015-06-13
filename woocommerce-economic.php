@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WooCommerce e-conomic Integration
- * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-economic-integration/
+ * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
  * Version: 1.4
