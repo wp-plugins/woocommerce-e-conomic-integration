@@ -242,7 +242,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					_e('Your integration works fine!', 'woocommerce-e-conomic-integration');
 					die(); // this is required to return a proper result
 				}else{
-					_e('Your e-conomic Token ID and Private app ID are not valid!', 'woocommerce-e-conomic-integration');
+					_e('Your e-conomic Token ID or License Key is not valid!', 'woocommerce-e-conomic-integration');
 					die(); // this is required to return a proper result
 				}
 			}
@@ -1097,7 +1097,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
              * @return void
              */
             function woocommerce_economic_options_page() {
-                $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : $this->start_action_key;?>
+                $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : $this->start_action_key;
+				$options = get_option('woocommerce_economic_general_settings');?>
+                
 
                 <!-- CSS -->
                 <style>
@@ -1192,6 +1194,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						float:left;
 					}
 					
+					.buttonDisable {
+						background: #C8C1C1 !important;  
+						border-color: #8C8989 !important;  
+						-webkit-box-shadow: inset 0 1px 0 rgba(114, 117, 118, 0.5),0 1px 0 rgba(0,0,0,.15) !important; 
+						box-shadow: inset 0 1px 0 rgba(176, 181, 182, 0.5),0 1px 0 rgba(0,0,0,.15) !important;
+					}
+					
 					p.submit{
 						float: left;
 						width: auto;
@@ -1264,7 +1273,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                             <?php settings_fields( $tab ); ?>
                             <?php do_settings_sections( $tab ); ?>
                             <?php submit_button(__('Save changes', 'woocommerce-e-conomic-integration')); ?>
+                            <?php if(!isset($options['token']) || $options['token'] == '' || !isset($options['license-key']) || $options['license-key'] ==''){ ?>
+                            <button style="margin: 20px 0px 0px 10px;" type="button" name="testConnection" class="button button-primary buttonDisable testConnection" onclick="" /><?php echo __('Test connection', 'woocommerce-e-conomic-integration'); ?></button>
+                            <?php }else{ ?>
                             <button style="margin: 20px 0px 0px 10px;" type="button" name="testConnection" class="button button-primary testConnection" onclick="test_connection()" /><?php echo __('Test connection', 'woocommerce-e-conomic-integration'); ?></button>
+                            <?php } ?>
                             <span class="test_warning"><?php echo __('NOTE! Save changes before testing the connection', 'woocommerce-e-conomic-integration'); ?></span>
                             <img style="margin: 10px 0px 0px 10px;" src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ );?>" class="test_load" >
                         </form>
