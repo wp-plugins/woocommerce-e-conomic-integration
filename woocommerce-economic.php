@@ -887,10 +887,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					_e('<span><i>e-conomic client not loaded properly, please refresh the page to load properly.</i></span>', 'woocommerce-e-conomic-integration');
 					return false;
 				}
-				if($args['key'] == 'product-group')
+				if($args['key'] == 'product-group'){
 					$groups = $client->ProductGroup_GetAll()->ProductGroup_GetAllResult->ProductGroupHandle;
-				if($args['key'] == 'customer-group')
+					foreach($groups as $group){
+						$groupnames[$group->Number] = $client->ProductGroup_GetName(array('productGroupHandle' => $group))->ProductGroup_GetNameResult;
+					}
+				}
+				if($args['key'] == 'customer-group'){
 					$groups = $client->DebtorGroup_GetAll ()->DebtorGroup_GetAllResult->DebtorGroupHandle;
+					foreach($groups as $group){
+						$groupnames[$group->Number] = $client->DebtorGroup_GetName(array('debtorGroupHandle' => $group))->DebtorGroup_GetNameResult;
+					}
+				}
 				
 				?>
                 <select name="<?php echo $args['tab_key']; ?>[<?php echo $args['key']; ?>]">
@@ -898,7 +906,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				foreach($groups as $group){
                 ?>
                     
-                        <option <?php if(isset($options[$args['key']]) && $options[$args['key']] == $group->Number) echo 'selected'; ?> value='<?php echo $group->Number; ?>'><?php echo $group->Number; ?></option>
+                        <option <?php if(isset($options[$args['key']]) && $options[$args['key']] == $group->Number) echo 'selected'; ?> value='<?php echo $group->Number; ?>'><?php echo $group->Number.'-'.$groupnames[$group->Number]; ?></option>
                  
             <?php
 				}
