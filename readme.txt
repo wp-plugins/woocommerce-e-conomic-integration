@@ -71,7 +71,7 @@ Features of WooCommerce e-conomic Integration:
 
 1.	Install WooCommerce e-conomic Integration either via the WordPress.org plugin directory, or by uploading the files to your server
 2.	Activate the plugin in your WordPress Admin and go to the admin dashboard menu e-conomic -> General settings.
-3.	Active the plugin by granting Wooconomic plugin access to your e-conomic account using the Token ID and License Key that you have received by mail.
+3.	Grant accesss to your e-conomic account for Wooconomic plugin using the Token ID and License Key that you have received by mail.
 4.	Configure your plugin as needed.
 5.	That's it. You're ready to focus on sales, marketing and other cool stuff :-)
 
