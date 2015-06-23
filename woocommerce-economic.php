@@ -1130,10 +1130,19 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						margin:25px 0px 0px 10px;
 					}
                     li.col-two {
-                        float: left;
+                        /*float: left;
                         width: 380px;
-                        margin-left: 1%;
+                        margin-left: 1%;*/
+						margin-left: 5%;
+						list-style-type: disc;
+						font-weight: 500;
+						font-size: 24px;
+						color: #0073aa;
+						line-height: 30px;
                     }
+					li.col-two a{
+						text-decoration: none;
+					}
                     li.col-onethird, li.col-twothird {
 	                    float: left;
                     }
@@ -1267,8 +1276,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                         <?php $this->plugin_options_tabs(); ?>
                         <ul>
                             <li class="logo"><?php echo '<img src="' . plugins_url( 'img/logo_landscape.png', __FILE__ ) . '" > '; ?></li>
-                            <li class="col-two"><a href="http://wooconomics.com/category/faq/"><?php echo '<img src="' . plugins_url( 'img/awp_faq.png', __FILE__ ) . '" > '; ?></a></li>
-                            <li class="col-two"><a href="http://wooconomics.com/"><?php echo '<img src="' . plugins_url( 'img/awp_support.png', __FILE__ ) . '" > '; ?></a></li>
+                            <li class="col-two"><a style="" href="http://wooconomics.com/category/faq/"><?php _e('Our most frequently asked questions FAQ', 'woocommerce-e-conomic-integration'); ?></a></li>
+                            <li class="col-two"><a href="http://wooconomics.com/"><?php _e('Support', 'woocommerce-e-conomic-integration'); ?></a></li>
                         </ul>
                     </div>
                 <?php
