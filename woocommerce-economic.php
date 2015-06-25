@@ -222,7 +222,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$headers .= "Content-type: text/html; charset=utf-8 \r\n";
 			//$headers .= "From:".get_option('admin_email')."\r\n";
 			
-            echo wp_mail( 'support@onlineforce.net', 'e-conomic Support', $message , $headers) ? "success" : "error";
+            echo wp_mail( 'support@wooconomics.com', 'e-conomic Support', $message , $headers) ? "success" : "error";
             //die(); // this is required to return a proper result
         }
 		
