@@ -1,0 +1,526 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce e-conomic Integration\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-31 20:57+0530\n"
+"PO-Revision-Date: 2015-08-31 20:58+0530\n"
+"Last-Translator: admin <log@uniwin.se>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Generator: Poedit 1.7.6\n"
+"X-Loco-Target-Locale: es_ES\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../class-economic-api.php:1071 ../class-economic-api.php:1077
+#: ../class-economic-api.php:1091 ../class-economic-api.php:1100
+#: ../class-economic-api.php:1264 ../class-economic-api.php:1538
+#: ../class-economic-api.php:1548 ../class-economic-api.php:1556
+#: ../class-economic-api.php:1678
+msgid "success"
+msgstr "Hecho."
+
+#: ../class-economic-api.php:1071
+msgid ""
+"Order not synced, because not an e-conomic order! Check \"Aktivera alla "
+"beställningar synkning\" to sync all order."
+msgstr ""
+"Orden no sincronizado, ya no una orden e-conomic! Marque &quot;Activar alla "
+"beställningar synkning&quot; para sincronizar todo orden."
+
+#: ../class-economic-api.php:1077 ../class-economic-api.php:1091
+msgid "Order synced successfully"
+msgstr "Solicitar sincronizado con éxito"
+
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1267 ../class-economic-api.php:1274
+#: ../class-economic-api.php:1279 ../class-economic-api.php:1502
+#: ../class-economic-api.php:1541 ../class-economic-api.php:1551
+#: ../class-economic-api.php:1664 ../class-economic-api.php:1681
+msgid "fail"
+msgstr "fallar"
+
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1541
+msgid "Sync failed, please try again later!"
+msgstr "Sincronización falló, por favor intente de nuevo más tarde!"
+
+#: ../class-economic-api.php:1100
+msgid "All orders were already synced!"
+msgstr "Todos los pedidos que ya se sincronizan!"
+
+#: ../class-economic-api.php:1264
+msgid "Product synced successfully"
+msgstr "Producto sincronizado con éxito"
+
+#: ../class-economic-api.php:1267
+msgid ""
+"Product not synced, someting went wrong. Please check the \"Activate product "
+"sync\" settings!"
+msgstr ""
+"Producto no sincronizado, algo salió mal. Compruebe la configuración de "
+"\"Active sync de producto\"."
+
+#: ../class-economic-api.php:1274
+msgid "Product not synced, SKU is empty!"
+msgstr "El producto no sincronizado, SKU está vacía!"
+
+#: ../class-economic-api.php:1279
+msgid "Product not synced, product title is empty!"
+msgstr "El producto no sincronizado, título del producto está vacía!"
+
+#: ../class-economic-api.php:1502 ../class-economic-api.php:1664
+msgid "Could not create e-conomic client, please try again later!"
+msgstr ""
+"No se pudo crear e-conomic cliente, por favor intente de nuevo más tarde!"
+
+#: ../class-economic-api.php:1538
+msgid "Customer synced successfully"
+msgstr "Cliente sincronizado con éxito"
+
+#: ../class-economic-api.php:1548
+msgid "Guest customer synced successfully"
+msgstr "Cliente huésped sincronizado con éxito"
+
+#: ../class-economic-api.php:1551
+msgid "Guest customer sync failed, please try again later!"
+msgstr ""
+"Sincronización de cliente huésped falló, por favor Inténtalo más tarde!"
+
+#: ../class-economic-api.php:1556
+msgid "All customers were already synced!"
+msgstr "Todos los clientes que ya estaban sincronizados!"
+
+#: ../class-economic-api.php:1678
+msgid "Shipping synced successfully"
+msgstr "Envios sincronizado con éxito"
+
+#: ../class-economic-api.php:1681
+msgid "Shipping not synced, please try again!"
+msgstr "Envío no sincronizado, por favor intente de nuevo!"
+
+#: ../economic-payment.php:23 ../economic-payment.php:60
+msgid "e-conomic Invoice"
+msgstr "Factura e-conomic"
+
+#: ../economic-payment.php:24 ../economic-payment.php:67
+msgid "Receive an invoice from e-conomic in no time!"
+msgstr "Recibir una factura de e-conomic en ninguna hora!"
+
+#: ../economic-payment.php:50
+msgid "Enable/Disable"
+msgstr "Activar/Desactivar"
+
+#: ../economic-payment.php:52 ../economic-payment.php:53
+msgid "Enable e-conomic Invoice Payment"
+msgstr "Habilitar pago de factura e-conomic"
+
+#: ../economic-payment.php:57
+msgid "Title"
+msgstr "Títol"
+
+#: ../economic-payment.php:59
+msgid "This controls the title which the user sees during checkout."
+msgstr "Esto controla el título que el usuario ve al terminar la compra."
+
+#: ../economic-payment.php:64
+msgid "Description"
+msgstr "Descripción"
+
+#: ../economic-payment.php:66
+msgid "Payment method description that the customer will see on your checkout."
+msgstr "Forma de pago descripción que el cliente verá en su caja."
+
+#: ../economic-payment.php:71
+msgid "Instructions"
+msgstr "Instrucciones"
+
+#: ../economic-payment.php:73
+msgid "Instructions that will be added to the thank you page and emails."
+msgstr ""
+"Instrucciones que se añadirán a la página de agradecimiento y correos "
+"electrónicos."
+
+#: ../economic-payment.php:113
+msgid "Awaiting e-conomic Invoice payment"
+msgstr "Pendientes de pago de factura e-conomic"
+
+#: ../woocommerce-economic.php:77 ../woocommerce-economic.php:107
+#: ../woocommerce-economic.php:135 ../woocommerce-economic.php:164
+msgid "<br>Sync status: "
+msgstr "<br>Estado de sincronización:"
+
+#: ../woocommerce-economic.php:78
+msgid "Product SKU: "
+msgstr "SKU Producto:"
+
+#: ../woocommerce-economic.php:79
+msgid "Product Name: "
+msgstr "Nombre del producto:"
+
+#: ../woocommerce-economic.php:80 ../woocommerce-economic.php:109
+#: ../woocommerce-economic.php:137 ../woocommerce-economic.php:166
+msgid "Sync message: "
+msgstr "Mensaje de sincronización:"
+
+#: ../woocommerce-economic.php:83
+msgid "Products are synchronized without problems."
+msgstr "Los productos se sincronizan sin problemas."
+
+#: ../woocommerce-economic.php:88 ../woocommerce-economic.php:116
+#: ../woocommerce-economic.php:144 ../woocommerce-economic.php:173
+msgid "Something went wrong."
+msgstr "Parece que algo salió mal."
+
+#: ../woocommerce-economic.php:112
+msgid "Orders are synchronized without problems."
+msgstr "Las órdenes se sincronizan sin problemas."
+
+#: ../woocommerce-economic.php:140
+msgid "Contacts synchronized without problems."
+msgstr "Los contactos se sincronizan sin problemas."
+
+#: ../woocommerce-economic.php:165
+msgid "Shipping type: "
+msgstr "Tipo de envío:"
+
+#: ../woocommerce-economic.php:169
+msgid "Delivery synchronized without problems."
+msgstr "Entrega sincronizada sin problemas."
+
+#: ../woocommerce-economic.php:237
+msgid "License Key is Invalid!"
+msgstr "Licencia clave inválida"
+
+#: ../woocommerce-economic.php:242
+msgid "Your integration works fine!"
+msgstr "La integración funciona bien!"
+
+#: ../woocommerce-economic.php:245
+msgid "Your e-conomic Token ID or License Key is not valid!"
+msgstr "Su e-económica Token ID o clave de licencia no es válida!"
+
+#: ../woocommerce-economic.php:249
+msgid "Something went wrong, please try again later!"
+msgstr "Something went wrong! Please try again later."
+
+#: ../woocommerce-economic.php:267
+msgid "WooCommerce e-conomic Integration: License Key Invalid!"
+msgstr "WooCommerc e-conomic integración: Invalid clave de licencia."
+
+#: ../woocommerce-economic.php:267 ../woocommerce-economic.php:989
+msgid "Get license Key"
+msgstr "Obtener licencia Key"
+
+#: ../woocommerce-economic.php:304
+msgid "<h3>WooCommerce e-conomic Integration</h3>"
+msgstr "<h3>WooCommerce-economic e integración</h3>"
+
+#: ../woocommerce-economic.php:305
+msgid ""
+"<p>You’ve just installed WooCommerce e-conomic Integration by wooconomics. "
+"Please use the plugin options page to setup your integration.</p>"
+msgstr ""
+"<p>Sólo has instalado la integración e-conomic WooCommerce WooBill. Por "
+"favor use la página de opciones del plugin para configurar su integración.</"
+"p>"
+
+#: ../woocommerce-economic.php:816
+msgid " Please save the settings before leaving this page!"
+msgstr "Por favor, guarde los ajustes antes de salir de esta página!"
+
+#: ../woocommerce-economic.php:819
+msgid " Click here to generate token access ID"
+msgstr "Haga clic aquí para generar el token de acceso ID"
+
+#: ../woocommerce-economic.php:881
+msgid "Create invoice"
+msgstr "Crear factura"
+
+#: ../woocommerce-economic.php:882
+msgid "Create order"
+msgstr "Crear pedido"
+
+#: ../woocommerce-economic.php:901
+msgid ""
+"<span><i>e-conomic client not loaded properly, please refresh the page to "
+"load properly.</i></span>"
+msgstr ""
+"<span><i>e-conomic cliente no cargado correctamente, por favor, actualice la "
+"página para cargar correctamente.</i></span>"
+
+#: ../woocommerce-economic.php:989
+msgid "License Key Invalid"
+msgstr "Licencia clave inválida"
+
+#: ../woocommerce-economic.php:1012 ../woocommerce-economic.php:1017
+msgid "General settings"
+msgstr "Ajustes generales"
+
+#: ../woocommerce-economic.php:1019
+msgid "Token ID"
+msgstr "ID token"
+
+#: ../woocommerce-economic.php:1019
+msgid "Token access ID from e-conomic."
+msgstr "ID de acceso de emergencia de e-conomic."
+
+#: ../woocommerce-economic.php:1021
+msgid "License key"
+msgstr "Clave de licencia"
+
+#: ../woocommerce-economic.php:1021
+msgid "This is the License key you received from us by mail."
+msgstr "Esta es la clave de licencia que recibió de nosotros por correo."
+
+#: ../woocommerce-economic.php:1039
+msgid "Activate all orders sync"
+msgstr "Activar todas las órdenes de sincronización"
+
+#: ../woocommerce-economic.php:1039
+msgid ""
+"Sync all orders from WooCommerce e-conomic, regardless of whether the "
+"customer chooses another payment option (eg; Paypal, Dibs, Stripe, Payson, "
+"etc.) <br><i style=\"margin-left:25px; color: #F00;\">If you are unsure what "
+"to choose here, we recommend you do not select this option.</i>"
+msgstr ""
+"Sincronizar todas las órdenes de WooCommerce e-conomic, independientemente "
+"de si el cliente elige otra opción de pago (por ejemplo; Paypal, Dibs, raya, "
+"Payson, etc..)<br><i style=\"margin-left:25px; color: #F00;\">Si no está "
+"seguro qué elegir aquí, le recomendamos que no selecciona esta opción.</i>"
+
+#: ../woocommerce-economic.php:1041
+msgid "Activate old orders sync"
+msgstr "Activar la sincronización de órdenes viejo"
+
+#: ../woocommerce-economic.php:1041
+msgid "Also sync orders created before wooconomics installation."
+msgstr ""
+"También sincronizar los órdenes creadas antes de la instalación wooconomics."
+
+#: ../woocommerce-economic.php:1043
+msgid "Activate product sync"
+msgstr "Activar producto"
+
+#: ../woocommerce-economic.php:1043
+msgid "Sync product information from WooCommerce to economic."
+msgstr "Sincronizar información de producto de WooCommerce económico."
+
+#: ../woocommerce-economic.php:1045
+msgid "Create"
+msgstr "Crear"
+
+#: ../woocommerce-economic.php:1045
+msgid "Create e-conomic order or invoice?"
+msgstr "Crear factura"
+
+#: ../woocommerce-economic.php:1048
+msgid "Product group"
+msgstr "Grupo de productos"
+
+#: ../woocommerce-economic.php:1048
+msgid "e-conomic product group to which new products are added."
+msgstr "Grupo de productos e-conomic al cual se añaden nuevos productos."
+
+#: ../woocommerce-economic.php:1050
+msgid "Product prefix"
+msgstr "Prefijo de número de producto"
+
+#: ../woocommerce-economic.php:1050
+msgid "Prefix added to the products stored to e-conomic from woocommerce"
+msgstr ""
+"Prefijo de número de añadidos a los productos almacenados en e-conomic de "
+"woocommerce"
+
+#: ../woocommerce-economic.php:1052
+msgid "Customer group"
+msgstr "Grupo de clientes"
+
+#: ../woocommerce-economic.php:1052
+msgid "e-conomic customer group to which new customers are added."
+msgstr ""
+"Grupo de atención al cliente de e-conomic al cual se añaden nuevos clientes."
+
+#: ../woocommerce-economic.php:1068
+msgid "Manual functions"
+msgstr "Funciones manuales"
+
+#: ../woocommerce-economic.php:1081
+msgid "Welcome!"
+msgstr "¡Bienvenido!"
+
+#: ../woocommerce-economic.php:1095 ../woocommerce-economic.php:1306
+#: ../woocommerce-economic.php:1420
+msgid "Support"
+msgstr "Soporte"
+
+#: ../woocommerce-economic.php:1106
+msgid ""
+"Specifies basic settings for the e-conomic integration and you can control "
+"which parts you want to sync to e-conomic"
+msgstr ""
+"Especifica las opciones básicas para la integración económica e y usted "
+"puede controlar qué partes quieres sincronizar con e-conomic"
+
+#: ../woocommerce-economic.php:1115
+msgid "Description Accounting settings."
+msgstr "Ajustes de contabilidad Descripción."
+
+#: ../woocommerce-economic.php:1305
+msgid "Our most frequently asked questions FAQ"
+msgstr "Más preguntas frecuentes FAQ"
+
+#: ../woocommerce-economic.php:1318
+msgid "Save changes"
+msgstr "Guardar cambios"
+
+#: ../woocommerce-economic.php:1320 ../woocommerce-economic.php:1322
+msgid "Test connection"
+msgstr "Probar conexión"
+
+#: ../woocommerce-economic.php:1324
+msgid "NOTE! Save changes before testing the connection"
+msgstr "¡ NOTA! Guardar los cambios antes de probar la conexión"
+
+#: ../woocommerce-economic.php:1334
+msgid ""
+"The synchronization can take a long time depending on how many customers to "
+"be imported. \\ nA message will appear on this page when the synchronization "
+"is complete. Do not leave this page, which will suspended the import!"
+msgstr ""
+"La sincronización puede tardar mucho tiempo dependiendo del número de "
+"clientes que desea importar. Mensaje \\n A aparecerá en esta página cuando "
+"la sincronización haya finalizado. No deje esta página, que se suspendió la "
+"importación!"
+
+#: ../woocommerce-economic.php:1334
+msgid "Manual sync contacts"
+msgstr "Manual de la sincronización de los contactos"
+
+#: ../woocommerce-economic.php:1336
+msgid "Sync customers created manually in woocommerce dashboard."
+msgstr ""
+"Clientes de sincronización creados manualmente en woocommerce del tablero de "
+"instrumentos."
+
+#: ../woocommerce-economic.php:1339
+msgid ""
+"The synchronization can take a long time depending on how many orders to be "
+"exported. \\ nA message will appear on this page when the synchronization is "
+"complete. Do not leave this page, which will suspended the import!"
+msgstr ""
+"La sincronización puede tardar mucho tiempo dependiendo del número de "
+"pedidos para la exportación. Mensaje \\n A aparecerá en esta página cuando "
+"la sincronización haya finalizado. No deje esta página, que se suspendió la "
+"importación!"
+
+#: ../woocommerce-economic.php:1339
+msgid "Manual syncing orders/invoices"
+msgstr "Pedidos/facturas de sincronización manuales"
+
+#: ../woocommerce-economic.php:1341
+msgid ""
+"Synchronizes all orders that failed to synchronize. (default sync is set to "
+"General Settings-> Create options)"
+msgstr ""
+"Sincroniza todos los pedidos que no se pudo sincronizar. (sincronización de "
+"forma predeterminada se establece en Configuración General-> crear opciones)"
+
+#: ../woocommerce-economic.php:1344
+msgid ""
+"The synchronization can take a long time depending on how many products that "
+"will be exported. \\ nA message will appear on this page when the "
+"synchronization is complete. Do not leave this page, which will suspended "
+"the import!"
+msgstr ""
+"La sincronización puede tardar mucho tiempo dependiendo de la cantidad de "
+"productos que se exportarán. Mensaje \\n A aparecerá en esta página cuando "
+"la sincronización haya finalizado. No deje esta página, que se suspendió la "
+"importación!"
+
+#: ../woocommerce-economic.php:1344
+msgid "Manual sync products"
+msgstr "Productos de sincronización manual"
+
+#: ../woocommerce-economic.php:1346
+msgid ""
+"Send all products to your e-conomic. If you have many products, it may take "
+"a while."
+msgstr ""
+"Envíe todos los productos a tu e-conomic. Si usted tiene muchos productos, "
+"puede tomar un tiempo."
+
+#: ../woocommerce-economic.php:1349
+msgid ""
+"A message will appear on this page when the synchronization is complete. Do "
+"not leave this page, which will suspended the import!"
+msgstr ""
+"Aparecerá un mensaje en esta página cuando la sincronización haya "
+"finalizado. No deje esta página, que se suspendió la importación!"
+
+#: ../woocommerce-economic.php:1349
+msgid "Manual sync delivery methods"
+msgstr "Métodos de entrega de sincronización manual"
+
+#: ../woocommerce-economic.php:1351
+msgid "Send all delivery method costs to your e-conomic."
+msgstr "Enviar entrega todos los costos del método a tu e-conomic."
+
+#: ../woocommerce-economic.php:1373
+msgid "Installation Support"
+msgstr "Soporte de instalación"
+
+#: ../woocommerce-economic.php:1381 ../woocommerce-economic.php:1428
+msgid "Company"
+msgstr "Empresa"
+
+#: ../woocommerce-economic.php:1386 ../woocommerce-economic.php:1433
+msgid "Name"
+msgstr "Nom"
+
+#: ../woocommerce-economic.php:1391 ../woocommerce-economic.php:1438
+msgid "Phone"
+msgstr "Telèfon"
+
+#: ../woocommerce-economic.php:1396 ../woocommerce-economic.php:1443
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: ../woocommerce-economic.php:1401 ../woocommerce-economic.php:1448
+msgid "Subject"
+msgstr "Asunto"
+
+#: ../woocommerce-economic.php:1406 ../woocommerce-economic.php:1454
+msgid "Send"
+msgstr "Enviar"
+
+#~ msgid "Product not synced, please try again!"
+#~ msgstr "El producto no sincronizado, por favor intente de nuevo!"
+
+#~ msgid "Your e-conomic Token ID and Private app ID are not valid!"
+#~ msgstr ""
+#~ "Su identificación simbólica e-economic y privada app ID no son válidos."
+
+#~ msgid "Private app ID"
+#~ msgstr "ID de la aplicación privada"
+
+#~ msgid "Private app ID from e-conomic."
+#~ msgstr "ID. de aplicación privada de e-conomic."
+
+#~ msgid ""
+#~ "<p>You’ve just installed WooCommerce e-conomic Integration by WooBill. "
+#~ "Please use the plugin options page to setup your integration.</p>"
+#~ msgstr ""
+#~ "<p>Sólo has instalado la integración e-cononomic WooCommerce WooBill. Por "
+#~ "favor use la página de opciones del plugin para configurar su integración."
+#~ "</p>"
