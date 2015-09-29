@@ -95,7 +95,7 @@ http://wooconomics.com/category/faq/
 == Changelog ==
 
 = 1.9.2 =
-* Sync Customers and Products to and fro between WooCommerce and e-conomic.
+* Sync Customers and Products in both direction. Added option to select sync direction.
 * Bug fixes.
 
 = 1.9.1 =
