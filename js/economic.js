@@ -20,9 +20,15 @@ function sync_orders(sync_message) {
 }
 
 function sync_contacts(sync_message) {
-    var data = {
-        action: 'sync_contacts'
-    };
+	if(jQuery("#sync_direction option:selected").attr("value") == 'we'){
+		var data = {
+			action: 'sync_contacts'
+		};
+	}else{
+		var data = {
+			action: 'sync_contacts_ew'
+		};
+	}
     alert(sync_message);
     jQuery(".customer_load").show();
     jQuery.ajax({
@@ -31,15 +37,22 @@ function sync_contacts(sync_message) {
 		dataType: "json",
 	}).always(function(data) {
 		alert(data.status);
+		//alert (JSON.stringify(data));
 		jQuery("#result").html(data.msg);
 		jQuery(".customer_load").hide();
 	});
 }
 
 function sync_products(sync_message) {
-    var data = {
-        action: 'sync_products'
-    };
+	if(jQuery("#sync_direction option:selected").attr("value") == 'we'){
+		var data = {
+			 action: 'sync_products'
+		};
+	}else{
+		var data = {
+			 action: 'sync_products_ew'
+		};
+	}
     alert(sync_message);
 	jQuery(".product_load").show();
 	jQuery.ajax({
@@ -47,7 +60,8 @@ function sync_products(sync_message) {
 		data: data,
 		dataType: "json",
 	}).always(function(data) {
-		alert(data.status);
+		//alert(data.status);
+		alert (JSON.stringify(data));
 		jQuery("#result").html(data.msg);
 		jQuery(".product_load").hide();
 	});

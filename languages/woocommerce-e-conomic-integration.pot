@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce e-conomic Integration\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-09 16:15+0530\n"
-"PO-Revision-Date: 2015-06-09 16:15+0530\n"
+"POT-Creation-Date: 2015-08-31 20:49+0530\n"
+"PO-Revision-Date: 2015-08-31 20:50+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,73 +22,84 @@ msgstr ""
 "X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../class-economic-api.php:980 ../class-economic-api.php:986
-#: ../class-economic-api.php:993 ../class-economic-api.php:1002
-#: ../class-economic-api.php:1142 ../class-economic-api.php:1423
-#: ../class-economic-api.php:1431 ../class-economic-api.php:1553
+#: ../class-economic-api.php:1071 ../class-economic-api.php:1077
+#: ../class-economic-api.php:1091 ../class-economic-api.php:1100
+#: ../class-economic-api.php:1264 ../class-economic-api.php:1538
+#: ../class-economic-api.php:1548 ../class-economic-api.php:1556
+#: ../class-economic-api.php:1678
 msgid "success"
 msgstr ""
 
-#: ../class-economic-api.php:980
+#: ../class-economic-api.php:1071
 msgid ""
 "Order not synced, because not an e-conomic order! Check \"Aktivera alla "
 "beställningar synkning\" to sync all order."
 msgstr ""
 
-#: ../class-economic-api.php:986 ../class-economic-api.php:993
+#: ../class-economic-api.php:1077 ../class-economic-api.php:1091
 msgid "Order synced successfully"
 msgstr ""
 
-#: ../class-economic-api.php:989 ../class-economic-api.php:996
-#: ../class-economic-api.php:1145 ../class-economic-api.php:1152
-#: ../class-economic-api.php:1157 ../class-economic-api.php:1397
-#: ../class-economic-api.php:1426 ../class-economic-api.php:1539
-#: ../class-economic-api.php:1556
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1267 ../class-economic-api.php:1274
+#: ../class-economic-api.php:1279 ../class-economic-api.php:1502
+#: ../class-economic-api.php:1541 ../class-economic-api.php:1551
+#: ../class-economic-api.php:1664 ../class-economic-api.php:1681
 msgid "fail"
 msgstr ""
 
-#: ../class-economic-api.php:989 ../class-economic-api.php:996
-#: ../class-economic-api.php:1426
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1541
 msgid "Sync failed, please try again later!"
 msgstr ""
 
-#: ../class-economic-api.php:1002
+#: ../class-economic-api.php:1100
 msgid "All orders were already synced!"
 msgstr ""
 
-#: ../class-economic-api.php:1142
+#: ../class-economic-api.php:1264
 msgid "Product synced successfully"
 msgstr ""
 
-#: ../class-economic-api.php:1145
-msgid "Product not synced, please try again!"
+#: ../class-economic-api.php:1267
+msgid ""
+"Product not synced, someting went wrong. Please check the \"Activate product "
+"sync\" settings!"
 msgstr ""
 
-#: ../class-economic-api.php:1152
+#: ../class-economic-api.php:1274
 msgid "Product not synced, SKU is empty!"
 msgstr ""
 
-#: ../class-economic-api.php:1157
+#: ../class-economic-api.php:1279
 msgid "Product not synced, product title is empty!"
 msgstr ""
 
-#: ../class-economic-api.php:1397 ../class-economic-api.php:1539
+#: ../class-economic-api.php:1502 ../class-economic-api.php:1664
 msgid "Could not create e-conomic client, please try again later!"
 msgstr ""
 
-#: ../class-economic-api.php:1423
+#: ../class-economic-api.php:1538
 msgid "Customer synced successfully"
 msgstr ""
 
-#: ../class-economic-api.php:1431
-msgid "All customers were already synced!"
+#: ../class-economic-api.php:1548
+msgid "Guest customer synced successfully"
 msgstr ""
 
-#: ../class-economic-api.php:1553
-msgid "Shipping synced successfully"
+#: ../class-economic-api.php:1551
+msgid "Guest customer sync failed, please try again later!"
 msgstr ""
 
 #: ../class-economic-api.php:1556
+msgid "All customers were already synced!"
+msgstr ""
+
+#: ../class-economic-api.php:1678
+msgid "Shipping synced successfully"
+msgstr ""
+
+#: ../class-economic-api.php:1681
 msgid "Shipping not synced, please try again!"
 msgstr ""
 
@@ -188,7 +199,7 @@ msgid "Your integration works fine!"
 msgstr ""
 
 #: ../woocommerce-economic.php:245
-msgid "Your e-conomic Token ID and Private app ID are not valid!"
+msgid "Your e-conomic Token ID or License Key is not valid!"
 msgstr ""
 
 #: ../woocommerce-economic.php:249
@@ -199,7 +210,7 @@ msgstr ""
 msgid "WooCommerce e-conomic Integration: License Key Invalid!"
 msgstr ""
 
-#: ../woocommerce-economic.php:267 ../woocommerce-economic.php:959
+#: ../woocommerce-economic.php:267 ../woocommerce-economic.php:989
 msgid "Get license Key"
 msgstr ""
 
@@ -213,57 +224,57 @@ msgid ""
 "Please use the plugin options page to setup your integration.</p>"
 msgstr ""
 
-#: ../woocommerce-economic.php:802
+#: ../woocommerce-economic.php:816
 msgid " Please save the settings before leaving this page!"
 msgstr ""
 
-#: ../woocommerce-economic.php:805
+#: ../woocommerce-economic.php:819
 msgid " Click here to generate token access ID"
 msgstr ""
 
-#: ../woocommerce-economic.php:867
+#: ../woocommerce-economic.php:881
 msgid "Create invoice"
 msgstr ""
 
-#: ../woocommerce-economic.php:868
+#: ../woocommerce-economic.php:882
 msgid "Create order"
 msgstr ""
 
-#: ../woocommerce-economic.php:887
+#: ../woocommerce-economic.php:901
 msgid ""
 "<span><i>e-conomic client not loaded properly, please refresh the page to "
 "load properly.</i></span>"
 msgstr ""
 
-#: ../woocommerce-economic.php:959
+#: ../woocommerce-economic.php:989
 msgid "License Key Invalid"
 msgstr ""
 
-#: ../woocommerce-economic.php:982 ../woocommerce-economic.php:987
+#: ../woocommerce-economic.php:1012 ../woocommerce-economic.php:1017
 msgid "General settings"
 msgstr ""
 
-#: ../woocommerce-economic.php:989
+#: ../woocommerce-economic.php:1019
 msgid "Token ID"
 msgstr ""
 
-#: ../woocommerce-economic.php:989
+#: ../woocommerce-economic.php:1019
 msgid "Token access ID from e-conomic."
 msgstr ""
 
-#: ../woocommerce-economic.php:991
+#: ../woocommerce-economic.php:1021
 msgid "License key"
 msgstr ""
 
-#: ../woocommerce-economic.php:991
+#: ../woocommerce-economic.php:1021
 msgid "This is the License key you received from us by mail."
 msgstr ""
 
-#: ../woocommerce-economic.php:1009
+#: ../woocommerce-economic.php:1039
 msgid "Activate all orders sync"
 msgstr ""
 
-#: ../woocommerce-economic.php:1009
+#: ../woocommerce-economic.php:1039
 msgid ""
 "Sync all orders from WooCommerce e-conomic, regardless of whether the "
 "customer chooses another payment option (eg; Paypal, Dibs, Stripe, Payson, "
@@ -271,105 +282,126 @@ msgid ""
 "to choose here, we recommend you do not select this option.</i>"
 msgstr ""
 
-#: ../woocommerce-economic.php:1011
+#: ../woocommerce-economic.php:1041
+msgid "Activate old orders sync"
+msgstr ""
+
+#: ../woocommerce-economic.php:1041
+msgid "Also sync orders created before wooconomics installation."
+msgstr ""
+
+#: ../woocommerce-economic.php:1043
+msgid "Activate product sync"
+msgstr "Aktivera produkten synkning"
+
+#: ../woocommerce-economic.php:1043
+msgid "Sync product information from WooCommerce to economic."
+msgstr ""
+
+#: ../woocommerce-economic.php:1045
 msgid "Create"
 msgstr ""
 
-#: ../woocommerce-economic.php:1011
+#: ../woocommerce-economic.php:1045
 msgid "Create e-conomic order or invoice?"
 msgstr ""
 
-#: ../woocommerce-economic.php:1014
+#: ../woocommerce-economic.php:1048
 msgid "Product group"
 msgstr ""
 
-#: ../woocommerce-economic.php:1014
+#: ../woocommerce-economic.php:1048
 msgid "e-conomic product group to which new products are added."
 msgstr ""
 
-#: ../woocommerce-economic.php:1016
+#: ../woocommerce-economic.php:1050
 msgid "Product prefix"
 msgstr ""
 
-#: ../woocommerce-economic.php:1016
+#: ../woocommerce-economic.php:1050
 msgid "Prefix added to the products stored to e-conomic from woocommerce"
 msgstr ""
 
-#: ../woocommerce-economic.php:1018
+#: ../woocommerce-economic.php:1052
 msgid "Customer group"
 msgstr ""
 
-#: ../woocommerce-economic.php:1018
+#: ../woocommerce-economic.php:1052
 msgid "e-conomic customer group to which new customers are added."
 msgstr ""
 
-#: ../woocommerce-economic.php:1034
+#: ../woocommerce-economic.php:1068
 msgid "Manual functions"
 msgstr ""
 
-#: ../woocommerce-economic.php:1047
+#: ../woocommerce-economic.php:1081
 msgid "Welcome!"
 msgstr ""
 
-#: ../woocommerce-economic.php:1061 ../woocommerce-economic.php:1364
+#: ../woocommerce-economic.php:1095 ../woocommerce-economic.php:1306
+#: ../woocommerce-economic.php:1420
 msgid "Support"
 msgstr ""
 
-#: ../woocommerce-economic.php:1072
+#: ../woocommerce-economic.php:1106
 msgid ""
 "Specifies basic settings for the e-conomic integration and you can control "
 "which parts you want to sync to e-conomic"
 msgstr ""
 
-#: ../woocommerce-economic.php:1081
+#: ../woocommerce-economic.php:1115
 msgid "Description Accounting settings."
 msgstr ""
 
-#: ../woocommerce-economic.php:1266
+#: ../woocommerce-economic.php:1305
+msgid "Our most frequently asked questions FAQ"
+msgstr ""
+
+#: ../woocommerce-economic.php:1318
 msgid "Save changes"
 msgstr ""
 
-#: ../woocommerce-economic.php:1267
+#: ../woocommerce-economic.php:1320 ../woocommerce-economic.php:1322
 msgid "Test connection"
 msgstr ""
 
-#: ../woocommerce-economic.php:1268
+#: ../woocommerce-economic.php:1324
 msgid "NOTE! Save changes before testing the connection"
 msgstr ""
 
-#: ../woocommerce-economic.php:1278
+#: ../woocommerce-economic.php:1334
 msgid ""
 "The synchronization can take a long time depending on how many customers to "
 "be imported. \\ nA message will appear on this page when the synchronization "
 "is complete. Do not leave this page, which will suspended the import!"
 msgstr ""
 
-#: ../woocommerce-economic.php:1278
+#: ../woocommerce-economic.php:1334
 msgid "Manual sync contacts"
 msgstr ""
 
-#: ../woocommerce-economic.php:1280
+#: ../woocommerce-economic.php:1336
 msgid "Sync customers created manually in woocommerce dashboard."
 msgstr ""
 
-#: ../woocommerce-economic.php:1283
+#: ../woocommerce-economic.php:1339
 msgid ""
 "The synchronization can take a long time depending on how many orders to be "
 "exported. \\ nA message will appear on this page when the synchronization is "
 "complete. Do not leave this page, which will suspended the import!"
 msgstr ""
 
-#: ../woocommerce-economic.php:1283
+#: ../woocommerce-economic.php:1339
 msgid "Manual syncing orders/invoices"
 msgstr ""
 
-#: ../woocommerce-economic.php:1285
+#: ../woocommerce-economic.php:1341
 msgid ""
 "Synchronizes all orders that failed to synchronize. (default sync is set to "
 "General Settings-> Create options)"
 msgstr ""
 
-#: ../woocommerce-economic.php:1288
+#: ../woocommerce-economic.php:1344
 msgid ""
 "The synchronization can take a long time depending on how many products that "
 "will be exported. \\ nA message will appear on this page when the "
@@ -377,54 +409,54 @@ msgid ""
 "the import!"
 msgstr ""
 
-#: ../woocommerce-economic.php:1288
+#: ../woocommerce-economic.php:1344
 msgid "Manual sync products"
 msgstr ""
 
-#: ../woocommerce-economic.php:1290
+#: ../woocommerce-economic.php:1346
 msgid ""
 "Send all products to your e-conomic. If you have many products, it may take "
 "a while."
 msgstr ""
 
-#: ../woocommerce-economic.php:1293
+#: ../woocommerce-economic.php:1349
 msgid ""
 "A message will appear on this page when the synchronization is complete. Do "
 "not leave this page, which will suspended the import!"
 msgstr ""
 
-#: ../woocommerce-economic.php:1293
+#: ../woocommerce-economic.php:1349
 msgid "Manual sync delivery methods"
 msgstr ""
 
-#: ../woocommerce-economic.php:1295
+#: ../woocommerce-economic.php:1351
 msgid "Send all delivery method costs to your e-conomic."
 msgstr ""
 
-#: ../woocommerce-economic.php:1317
+#: ../woocommerce-economic.php:1373
 msgid "Installation Support"
 msgstr ""
 
-#: ../woocommerce-economic.php:1325 ../woocommerce-economic.php:1372
+#: ../woocommerce-economic.php:1381 ../woocommerce-economic.php:1428
 msgid "Company"
 msgstr ""
 
-#: ../woocommerce-economic.php:1330 ../woocommerce-economic.php:1377
+#: ../woocommerce-economic.php:1386 ../woocommerce-economic.php:1433
 msgid "Name"
 msgstr ""
 
-#: ../woocommerce-economic.php:1335 ../woocommerce-economic.php:1382
+#: ../woocommerce-economic.php:1391 ../woocommerce-economic.php:1438
 msgid "Phone"
 msgstr ""
 
-#: ../woocommerce-economic.php:1340 ../woocommerce-economic.php:1387
+#: ../woocommerce-economic.php:1396 ../woocommerce-economic.php:1443
 msgid "Email"
 msgstr ""
 
-#: ../woocommerce-economic.php:1345 ../woocommerce-economic.php:1392
+#: ../woocommerce-economic.php:1401 ../woocommerce-economic.php:1448
 msgid "Subject"
 msgstr ""
 
-#: ../woocommerce-economic.php:1350 ../woocommerce-economic.php:1398
+#: ../woocommerce-economic.php:1406 ../woocommerce-economic.php:1454
 msgid "Send"
 msgstr ""

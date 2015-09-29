@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.4
+ * Version: 1.9.2
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -45,7 +45,7 @@ if ( ! function_exists( 'logthis' ) ) {
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
-    if ( ! class_exists( 'WCEconomic' ) ) {
+    if ( ! class_exists( 'WC_Economic' ) ) {
 		
 		
 		//Add e-conomic payment class
@@ -59,8 +59,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         }
 
         add_action( 'admin_enqueue_scripts', 'economic_enqueue' );
+		
+		
+		add_action('economic_product_sync_cron', 'economic_sync_products_callback');
         add_action( 'wp_ajax_sync_products', 'economic_sync_products_callback' );
-
         function economic_sync_products_callback() {
 			//echo json_encode(array('status' => 'test', 'msg'=>'testing ajax')); exit; die();
             global $wpdb; // this is how you get access to the database
@@ -73,6 +75,37 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}			
 			$log_msg = '';		
 			$sync_log = $wce_api->sync_products();
+			foreach(array_slice($sync_log, 1) as $key => $value){
+				$log_msg .= __('<br>Sync status: ', 'woocommerce-e-conomic-integration'). $value['status'].'<br>';
+				$log_msg .= __('Product SKU: ', 'woocommerce-e-conomic-integration'). $value['sku'].'<br>';
+				$log_msg .= __('Product Name: ', 'woocommerce-e-conomic-integration'). $value['name'].'<br>';
+				$log_msg .= __('Sync message: ', 'woocommerce-e-conomic-integration'). $value['msg'].'<br>';
+			}
+            if($sync_log[0]){
+				$log = array('status' => __('Products are synchronized without problems.', 'woocommerce-e-conomic-integration'), 'msg' => $log_msg);
+				//logthis(json_encode($log));
+				echo json_encode($log);
+            }
+            else{
+				$log = array('status' => __('Something went wrong.', 'woocommerce-e-conomic-integration'), 'msg' => $log_msg);
+				echo json_encode($log);
+            }
+            die(); // this is required to return a proper result
+        }
+		
+		add_action( 'wp_ajax_sync_products_ew', 'economic_sync_products_ew_callback' );
+        function economic_sync_products_ew_callback() {
+			//echo json_encode(array('status' => 'test', 'msg'=>'testing ajax')); exit; die();
+            global $wpdb; // this is how you get access to the database
+			include_once("class-economic-api.php");
+            $wce_api = new WCE_API();
+			$wce = new WC_Economic();
+			if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
+			  logthis("economic_sync_products_callback exiting because license key validation not passed.");
+			  return false;
+			}			
+			$log_msg = '';		
+			$sync_log = $wce_api->sync_products_ew();
 			foreach(array_slice($sync_log, 1) as $key => $value){
 				$log_msg .= __('<br>Sync status: ', 'woocommerce-e-conomic-integration'). $value['status'].'<br>';
 				$log_msg .= __('Product SKU: ', 'woocommerce-e-conomic-integration'). $value['sku'].'<br>';
@@ -118,6 +151,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             }
             die(); // this is required to return a proper result
         }
+		
 
         add_action( 'wp_ajax_sync_contacts', 'economic_sync_contacts_callback' );
         function economic_sync_contacts_callback() {
@@ -134,6 +168,36 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             foreach(array_slice($sync_log, 1) as $key => $value){
 				$log_msg .= __('<br>Sync status: ', 'woocommerce-e-conomic-integration'). $value['status'].'<br>';
 				isset($value['user_id']) ? $log_msg .= 'Contact ID: '. $value['user_id'].'<br>' : '';
+				$log_msg .= __('Sync message: ', 'woocommerce-e-conomic-integration'). $value['msg'].'<br>';
+			}
+            if($sync_log[0]){
+				$log = array('status' => __('Contacts synchronized without problems.', 'woocommerce-e-conomic-integration'), 'msg' => $log_msg);
+				echo json_encode($log);
+            }
+            else{
+				$log = array('status' => __('Something went wrong.', 'woocommerce-e-conomic-integration'), 'msg' => $log_msg);
+				echo json_encode($log);
+            }
+            die(); // this is required to return a proper result
+        }
+		
+		//Sync function added for e-conomic to woocommerce sync.
+		
+		add_action( 'wp_ajax_sync_contacts_ew', 'economic_sync_contacts_ew_callback' );
+        function economic_sync_contacts_ew_callback() {
+            global $wpdb; // this is how you get access to the database
+			include_once("class-economic-api.php");
+            $wce_api = new WCE_API();
+			$wce = new WC_Economic();
+			if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
+			  logthis("economic_sync_contacts_ew_callback existing because licensen key validation not passed.");
+			  return false;
+			}
+			$log_msg = '';
+			$sync_log = $wce_api->sync_contacts_ew();
+            foreach(array_slice($sync_log, 1) as $key => $value){
+				$log_msg .= __('<br>Sync status: ', 'woocommerce-e-conomic-integration'). $value['status'].'<br>';
+				isset($value['user_id']) ? $log_msg .= 'User ID: '. $value['user_id'].'<br>' : '';
 				$log_msg .= __('Sync message: ', 'woocommerce-e-conomic-integration'). $value['msg'].'<br>';
 			}
             if($sync_log[0]){
@@ -200,19 +264,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$message .= '<tr><td align="right" colspan="1"><strong>Allmänna inställningar</strong></td></tr>';
 				$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.$options['license-key'].'</td></tr>';
 				$message .= '<tr><td align="right">Token ID: </td><td align="left">'.$options['token'].'</td></tr>';
-				//$message .= '<tr><td align="right">Private app ID: </td><td align="left">'.$options['appToken'].'</td></tr>';
-				//$message .= '<tr><td align="right">Avtalsnr.: </td><td align="left">'.$options['agreementNumber'].'</td></tr>';
-				//$message .= '<tr><td align="right">Användar-ID: </td><td align="left">'.$options['username'].'</td></tr>';
-				//$message .= '<tr><td align="right">Lösenord: </td><td align="left">'.$options['password'].'</td></tr>';
-				//$message .= '<tr><td align="right">e-conomic synk alternativ: </td><td align="left">'.$options['sync-option'].'</td></tr>';
-				//$message .= '<tr><td align="right">Aktivera kassaböckerna: </td><td align="left">'.$options['activate-cashbook'].'</td></tr>';
-				//$message .= '<tr><td align="right">Kassaböckerna namn: </td><td align="left">'.$options['cashbook-name'].'</td></tr>';
+				$message .= '<tr><td align="right">Activate all orders sync: </td><td align="left">'.$options['activate-allsync'].'</td></tr>';
+				$message .= '<tr><td align="right">Activate old orders sync: </td><td align="left">'.$options['activate-oldordersync'].'</td></tr>';
+				$message .= '<tr><td align="right">Activate product sync: </td><td align="left">'.$options['product-sync'].'</td></tr>';
+				$message .= '<tr><td align="right">Run scheduled product stock sync: </td><td align="left">'.$options['scheduled-product-sync'].'</td></tr>';
+				$message .= '<tr><td align="right">Create: </td><td align="left">'.$options['sync-order-invoice'].'</td></tr>';
 				$message .= '<tr><td align="right">Produktgrupp: </td><td align="left">'.$options['product-group'].'</td></tr>';
 				$message .= '<tr><td align="right">Produkt prefix: </td><td align="left">'.$options['product-prefix'].'</td></tr>';
 				$message .= '<tr><td align="right">Kundgrupp: </td><td align="left">'.$options['customer-group'].'</td></tr>';
 				$message .= '<tr><td align="right">Aktivera alla beställningar synkning: </td><td align="left">'.$options['activate-allsync'].'</td></tr>';
-				//$message .= '<tr><td align="right">Kund prefix: </td><td align="left">'.$options['customer-prefix'].'</td></tr>';
-				//$message .= '<tr><td align="right">Frakt produktnummer: </td><td align="left">'.$options['shipping-product-id'].'</td></tr>';
 			}
 			
 			$message .= '</table></html></body>';
@@ -222,7 +282,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$headers .= "Content-type: text/html; charset=utf-8 \r\n";
 			//$headers .= "From:".get_option('admin_email')."\r\n";
 			
-            echo wp_mail( 'support@wooconomics.com', 'e-conomic Support', $message , $headers) ? "success" : "error";
+            echo wp_mail( 'support@onlineforce.net', 'e-conomic Support', $message , $headers) ? "success" : "error";
             //die(); // this is required to return a proper result
         }
 		
@@ -340,6 +400,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		//Save product to economic from woocommerce.
 		add_action('save_post', 'woo_save_object_to_economic', 2, 2);
 		function woo_save_object_to_economic( $post_id, $post) {
+		  if(!get_option('woo_save_object_to_economic')){
+			  logthis("woo_save_object_to_economic existing because disabled!");
+			  return;
+		  }
 		  include_once("class-economic-api.php");
 		  $wce = new WC_Economic();
 		  $wce_api = new WCE_API();
@@ -348,7 +412,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			  return false;
 		  }
 		  logthis("woo_save_object_to_economic called by post_id: " . $post_id . " posttype: " . $post->post_type);
-		  if ( !$_POST ) return $post_id;
+		  if ( !$post ) return $post_id;
 		  if ( is_int( wp_is_post_revision( $post_id ) ) ) return;
 		  if( is_int( wp_is_post_autosave( $post_id ) ) ) return;
 		  if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) return $post_id;
@@ -403,7 +467,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 				logthis("woo_save_invoice_order_to_economic: order_id: ".$order_id);
 				$order = new WC_Order($order_id);
-				$user = new WP_User($order->user_id);
+				if($order->customer_user != 0){
+					$user = new WP_User($order->customer_user);
+				}else{
+					$user = NULL;
+				}
 				if($order->payment_method != 'economic-invoice'){
 					if($options['activate-allsync'] != "on"){
 						if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id." AND synced=0;")){
@@ -421,7 +489,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 				$client = $wce_api->woo_economic_client();
 				if($options['sync-order-invoice'] == 'invoice' || $order->payment_method == 'economic-invoice'){
-					if($wce_api->save_invoice_to_economic($user, $order, $client, false)){
+					if($wce_api->save_invoice_to_economic($client, $user, $order, false)){
 						logthis("woo_save_invoice_to_economic order: " . $order_id . " is synced with economic");
 					}
 					else{
@@ -490,21 +558,26 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$wce = new WC_Economic();
 				$wce_api = new WCE_API();
 				$order = new WC_Order($order_id);
-				$user = new WP_User($order->user_id);
+				if($order->customer_user != 0){
+					$user = new WP_User($order->customer_user);
+				}else{
+					$user = NULL;
+				}
 				if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
-					if($wpdb->query ("SELECT * FROM wce_customers WHERE user_id=".$user->ID.";")){
-						$wpdb->update ("wce_customers", array('synced' => 0), array('user_id' => $user->ID), array('%d'), array('%d'));
+					if($wpdb->query ("SELECT * FROM wce_customers WHERE email=".$order->billing_email.";")){
+						$wpdb->update ("wce_customers", array('synced' => 0), array('email' => $order->billing_email), array('%d'), array('%s'));
 					}else{
-						$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'synced' => 0), array('%d', '%s', '%d'));
+						$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'email' => $order->billing_email, 'synced' => 0), array('%d', '%s', '%s', '%d'));
 					}
 					return false;
 				}
-				logthis("woo_save_customer_to_economic for user_id: " . $user->ID);
+				logthis("woo_save_customer_to_economic for user: " . $order->billing_first_name);
 			
 				if (woo_is_economic_customer($user)) {
 					$client = $wce_api->woo_economic_client();
-					if($wce_api->save_customer_to_economic($user, $client)){
-						logthis("woo_save_customer_to_economic user: " . $user->ID . " is synced with economic.");
+					logthis("woo_save_customer_to_economic user: " . $order->billing_first_name . " is being synced with economic.");
+					if($wce_api->save_customer_to_economic($client, $user, $order)){
+						logthis("woo_save_customer_to_economic user: " . $order->billing_first_name . " is synced with economic.");
 						if($order->payment_method != 'economic-invoice'){
 							if($options['activate-allsync'] != "on"){
 								if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id." AND synced=0;")){
@@ -516,21 +589,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							}
 						}
 						if($options['sync-order-invoice'] == 'invoice' || $order->payment_method == 'economic-invoice'){
-							if($wce_api->save_invoice_to_economic($user, $order, $client, false)){
+							if($wce_api->save_invoice_to_economic($client, $user, $order, false)){
 								logthis("woo_save_invoice_to_economic order: " . $order_id . " is synced with economic.");
 							}
 							else{
 								logthis("woo_save_invoice_to_economic order: " . $order_id . " sync failed, please try again after sometime!");
 							}
 							if($order->payment_method == 'economic-invoice'){
-								if($wce_api->send_invoice_economic($user, $order, $client)){
+								if($wce_api->send_invoice_economic($client, $order)){
 									logthis("woo_save_invoice_to_economic invoice for order: " . $order_id . " is sent to customer.");
 								}else{
 									logthis("woo_save_invoice_to_economic invoice for order: " . $order_id . " sending failed!");
 								}
 							}
 						}else{
-							if($wce_api->save_order_to_economic($user, $order, $client, false)){
+							logthis("woo_save_customer_to_economic calling save_order_to_economic...");
+							if($wce_api->save_order_to_economic($client, $user, $order, false)){
 								logthis("woo_save_order_to_economic order: " . $order_id . " is synced with economic.");
 							}
 							else{
@@ -552,18 +626,20 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
 					return false;
 				}
-				if($wpdb->query ("SELECT * FROM wce_customers WHERE ordeuser_idr_id=".$user->ID." AND synced=0;")){
+				if($wpdb->query ("SELECT * FROM wce_customers WHERE email=".$order->billing_email." AND synced=0;")){
 					return false;
 				}else{
-					$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'synced' => 0), array('%d', '%s', '%d'));
+					$wpdb->insert ("wce_customers", array('user_id' => $user->ID, 'customer_number' => 0, 'email' => $order->billing_email, 'synced' => 0), array('%d', '%s', '%s', '%d'));
 					return false;
 				}
 				return false;
 			}
 		}
 		
-		function woo_is_economic_customer(WP_User $user) {
-		  $is_customer = false;
+		function woo_is_economic_customer($user) {
+		  //$is_customer = false; changed for accepting all customers.
+		  $is_customer = true;
+		  return $is_customer;
 		  foreach ($user->roles as $role) {
 			logthis("user role: " . $role);
 			if ($role == 'customer') {
@@ -583,24 +659,24 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		  include_once("class-economic-api.php");
 		  $wce = new WC_Economic();
 		  $wce_api = new WCE_API();
+		  $user = new WP_User($object_id);
 		  if(in_array($meta_key, $wce_api->user_fields)){
 			  logthis("woo_update_user_meta_to_economic: meta_id: ".$meta_id." object_id: ".$object_id." meta_key: ".$meta_key." meta_value: ".$_meta_value);
 			  if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
 				  if($wpdb->query ("SELECT * FROM wce_customers WHERE user_id=".$object_id.";")){
-					 $wpdb->update ("wce_customers", array('synced' => 0), array('user_id' => $object_id), array('%d'), array('%d'));
+					 $wpdb->update ("wce_customers", array('email' => $user->get('billing_email'), 'synced' => 0), array('user_id' => $object_id), array('%s', '%d'), array('%d'));
 				  }else{
-					 $wpdb->insert ("wce_customers", array('user_id' => $object_id, 'customer_number' => 0, 'synced' => 0), array('%d', '%s', '%d'));
+					 $wpdb->insert ("wce_customers", array('user_id' => $object_id, 'customer_number' => 0, 'email' => $user->get('billing_email'), 'synced' => 0), array('%d', '%s', '%s', '%d'));
 				  }
 				  return false;
 			  }
-			  $user = new WP_User($object_id);
 			  if (woo_is_economic_customer($user)) {
 				$client = $wce_api->woo_economic_client();
 				
-				$debtorHandle = $wce_api->woo_get_debtor_handle_from_economic($user, $client);
-				$debtor_delivery_location_handle = $wce_api->woo_get_debtor_delivery_location_handles_from_economic($user, $client);
+				$debtorHandle = $wce_api->woo_get_debtor_handle_from_economic($client, $user);
+				$debtor_delivery_location_handle = $wce_api->woo_get_debtor_delivery_location_handles_from_economic($client, $debtorHandle);
 				
-				if($wce_api->woo_save_customer_meta_data_to_economic($user, $client, $meta_key, $_meta_value, $debtorHandle, $debtor_delivery_location_handle)){
+				if($wce_api->woo_save_customer_meta_data_to_economic($client, $meta_key, $_meta_value, $debtorHandle, $debtor_delivery_location_handle, $user)){
 					$wpdb->update ("wce_customers", array('synced' => 1), array('user_id' => $user->ID), array('%d'), array('%d'));
 					logthis("woo_update_user_meta_to_economic user: " . $user->ID . " additional data is synced with economic");
 				}
@@ -643,6 +719,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$sql = "CREATE TABLE IF NOT EXISTS ".$wce_customers."( id MEDIUMINT(9) NOT NULL AUTO_INCREMENT,
 					user_id MEDIUMINT(9) NOT NULL,
 					customer_number MEDIUMINT(9) NOT NULL,
+					email VARCHAR(320) DEFAULT NULL,
 					synced TINYINT(1) DEFAULT FALSE NOT NULL,
 					UNIQUE KEY user_id (id)
 			);";
@@ -650,7 +727,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', '1.4');
+			update_option('economic_version', 1.92);
+			update_option('woo_save_object_to_economic', true);
 		}
 		
 		/**
@@ -670,7 +748,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			delete_option('economic_version');
 			delete_option('woocommerce_economic_general_settings');	
 			delete_option('local_key_economic_plugin');
-			delete_option('woocommerce_economic_order_settings');		
+			delete_option('woocommerce_economic_order_settings');
+			wp_clear_scheduled_hook('economic_product_sync_cron');		
 		}
 		
 		/**
@@ -679,15 +758,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		*/
 		function economic_update(){
 			global $wpdb;
-			$table_name = "wce_orders";
+			$wce_orders = "wce_orders";
+			$wce_customers = "wce_customers";
 			$economic_version = get_option('economic_version');
-			if($economic_version != '' && floatval($economic_version) < 1.4 ){
-				
+			if(floatval($economic_version) < 1.7 ){
+				$wpdb->query("ALTER TABLE ".$wce_customers." ADD email VARCHAR(320) DEFAULT NULL AFTER customer_number");
 			}
-			update_option('economic_version', '1.4');
+			update_option('economic_version', 1.92);
+			update_option('woo_save_object_to_economic', true);
 		}
 		
-		//add_action( 'plugins_loaded', 'economic_update' );
+		add_action( 'plugins_loaded', 'economic_update' );
 		
 		// install necessary tables
 		register_activation_hook( __FILE__, 'economic_install');
@@ -719,6 +800,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             private $accounting_settings;
             private $plugin_options_key = 'woocommerce_economic_options';
             private $plugin_settings_tabs = array();
+			
 
             public function __construct() {
 
@@ -841,6 +923,52 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 <span id="sandbox-mode"><i><?php echo $args['desc']; ?></i></span>
             <?php
             }
+			
+			/**
+             * Generates html for dropdown for given settings params
+             *
+             * @access public
+             * @param void
+             * @return void
+             */
+            function field_option_schedule($args) {
+                $options = get_option($args['tab_key']);
+                $hourly = '';
+                $twicedaily = '';
+				$daily = '';
+				$disabled = '';
+                if(isset($options[$args['key']])){
+                    if($options[$args['key']] == 'hourly'){
+                        $hourly = 'selected';
+                    }
+					elseif($options[$args['key']] == 'twicedaily'){
+						$twicedaily = 'selected';
+					}
+					elseif($options[$args['key']] == 'twicedaily'){
+						$daily = 'selected';
+					}
+					else{
+						$disabled = 'selected';
+					}
+                }
+				
+				wp_clear_scheduled_hook('economic_product_sync_cron');
+				if($options[$args['key']] != 'disabled' && $options[$args['key']] != ''){
+					wp_schedule_event(time(), $options[$args['key']], 'economic_product_sync_cron');
+				}
+
+                ?>
+                <select <?php echo isset($args['id'])? 'id="'.$args['id'].'"':''; ?> name="<?php echo $args['tab_key']; ?>[<?php echo $args['key']; ?>]">
+                	<option <?php echo $disabled; ?> value='disabled'><?php _e('Disabled', 'woocommerce-e-conomic-integration'); ?></option>
+                    <option <?php echo $hourly; ?> value='hourly'><?php _e('Hourly', 'woocommerce-e-conomic-integration'); ?></option>
+                    <option <?php echo $twicedaily; ?> value='twicedaily'><?php _e('Twice Daily', 'woocommerce-e-conomic-integration'); ?></option>
+                    <option <?php echo $daily; ?> value='daily'><?php _e('Daily', 'woocommerce-e-conomic-integration'); ?></option>
+                </select>
+                <span><i><?php echo $args['desc']; ?></i></span>
+            <?php
+            }
+			
+			
             
             /**
              * Generates html for dropdown for given settings params
@@ -889,14 +1017,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 				if($args['key'] == 'product-group'){
 					$groups = $client->ProductGroup_GetAll()->ProductGroup_GetAllResult->ProductGroupHandle;
-					foreach($groups as $group){
-						$groupnames[$group->Number] = $client->ProductGroup_GetName(array('productGroupHandle' => $group))->ProductGroup_GetNameResult;
+					if(is_array($groups)){
+						foreach($groups as $group){
+							$groupnames[$group->Number] = $client->ProductGroup_GetName(array('productGroupHandle' => $group))->ProductGroup_GetNameResult;
+						}
+					}else{
+						$groupnames[$groups->Number] = $client->ProductGroup_GetName(array('productGroupHandle' => $groups))->ProductGroup_GetNameResult;
 					}
 				}
 				if($args['key'] == 'customer-group'){
-					$groups = $client->DebtorGroup_GetAll ()->DebtorGroup_GetAllResult->DebtorGroupHandle;
-					foreach($groups as $group){
-						$groupnames[$group->Number] = $client->DebtorGroup_GetName(array('debtorGroupHandle' => $group))->DebtorGroup_GetNameResult;
+					$groups = $client->DebtorGroup_GetAll()->DebtorGroup_GetAllResult->DebtorGroupHandle;
+					if(is_array($groups)){
+						foreach($groups as $group){
+							$groupnames[$group->Number] = $client->DebtorGroup_GetName(array('debtorGroupHandle' => $group))->DebtorGroup_GetNameResult;
+						}
+					}else{
+						$groupnames[$groups->Number] = $client->DebtorGroup_GetName(array('debtorGroupHandle' => $groups))->DebtorGroup_GetNameResult;
 					}
 				}
 				
@@ -1015,6 +1151,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 //add_settings_field( 'woocommerce-economic-cashbook-name', 'Kassaböckerna namn', array( &$this, 'field_option_text'), $this->general_settings_key, 'section_general', array ( 'id' => 'cashbook-name', 'tab_key' => $this->general_settings_key, 'key' => 'cashbook-name', 'desc' => 'Välj kassaböckerna att lägga gäldenärens betalningar.'));
 				
 				add_settings_field( 'woocommerce-economic-activate-allsync', __('Activate all orders sync', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_checkbox' ), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'activate-allsync', 'desc' => __('Sync all orders from WooCommerce e-conomic, regardless of whether the customer chooses another payment option (eg; Paypal, Dibs, Stripe, Payson, etc.) <br><i style="margin-left:25px; color: #F00;">If you are unsure what to choose here, we recommend you do not select this option.</i>', 'woocommerce-e-conomic-integration')) );
+				
+				add_settings_field( 'woocommerce-economic-activate-oldordersync', __('Activate old orders sync', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_checkbox' ), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'activate-oldordersync', 'desc' => __('Also sync orders created before wooconomics installation.', 'woocommerce-e-conomic-integration')) );
+				
+				add_settings_field( 'woocommerce-economic-product-sync', __('Activate product sync', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_checkbox' ), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'product-sync', 'desc' => __('Sync product information from WooCommerce to e-conomic. (Stock information is updated regardless of this setting)', 'woocommerce-e-conomic-integration')) );
+				
+				add_settings_field( 'woocommerce-economic-scheduled-product-sync', __('Run scheduled product stock sync', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_schedule' ), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'scheduled-product-sync', 'desc' => __('Run scheduled product stock sync from e-conomic to WooCommerce.', 'woocommerce-e-conomic-integration')) );
 				
 				add_settings_field( 'woocommerce-economic-sync-order-invoice', __('Create', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_dropdown' ), $this->general_settings_key, 'section_general', array ( 'tab_key' => $this->general_settings_key, 'key' => 'sync-order-invoice', 'desc' => __('Create e-conomic order or invoice?', 'woocommerce-e-conomic-integration')) );
 				
@@ -1232,6 +1374,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					span.error{
 						color:#F00
 					}
+					#sync_direction{
+						float:left;
+						min-width:250px;
+						color: #555;
+						border-color: #ccc;
+						background: #f7f7f7;
+						margin-top: 60px;
+						margin-left: 8px;
+					}
                 </style>
                 <script type="text/javascript">
 					jQuery(document).ready(function() {
@@ -1304,6 +1455,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     <div class="wrap">
                         <?php $this->plugin_options_tabs(); ?>
                         <ul class="manuella">
+                        	<li class="full">
+                            	<select id="sync_direction">
+                                	<option value="we">WooCommerce to e-conomic</option>
+                                    <option value="ew">e-conomic to WooCommerce</option>
+                                </select>
+                            	<p> <?php _e('Manual sync direction', 'woocommerce-e-conomic-integration') ?> <br /><i><?php _e('Choose this option before using "Manual sync contacts" and "Manual sync products" syncs, default will be WooCommerce to e-conomic.<br>WooCommerce to e-conomic: Products and Customers data from WooCommerce send to e-conomic.<br>
+e-conomic to WooCommerce: Products and Customers data from e-conomic saved at WooCommerce.', 'woocommerce-e-conomic-integration'); ?></i></p>
+                                
+                            </li>
                             <li class="full">
                                 <button type="button" class="button" title="Manuell synkning kontakter" style="margin:5px" onclick="sync_contacts('<?php _e('The synchronization can take a long time depending on how many customers to be imported. \ nA message will appear on this page when the synchronization is complete. Do not leave this page, which will suspended the import!', 'woocommerce-e-conomic-integration') ?>')"><?php _e('Manual sync contacts', 'woocommerce-e-conomic-integration'); ?></button>
                                 <img src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ );?>" class="customer_load" >
@@ -1339,7 +1499,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                         		<?php echo '<img src="' . plugins_url( 'img/banner-772x250.png', __FILE__ ) . '" > '; ?>
                         	</li>
                             <li class="col-twothird">
-                                <iframe src="https://player.vimeo.com/video/131753163" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                <iframe src="//player.vimeo.com/video/38627647" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                             </li>
                             <?php if(!isset($options['license-key']) || $options['license-key'] == ''){ ?>
                             <li class="col-onethird">
@@ -1494,6 +1654,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	        	}
             }
         }
-        $GLOBALS['wc_consuasor'] = new WC_Economic();
+        $GLOBALS['WC_Economic'] = new WC_Economic();
     }
 }
