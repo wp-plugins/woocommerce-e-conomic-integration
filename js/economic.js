@@ -60,8 +60,8 @@ function sync_products(sync_message) {
 		data: data,
 		dataType: "json",
 	}).always(function(data) {
-		//alert(data.status);
-		alert (JSON.stringify(data));
+		alert(data.status);
+		//alert (JSON.stringify(data));
 		jQuery("#result").html(data.msg);
 		jQuery(".product_load").hide();
 	});
