@@ -235,8 +235,8 @@ class WCE_API{
         $whmcsurl = 'http://whmcs.onlineforce.net/'; $whmcsurlsock = 'whmcs.onlineforce.net';
         // Must match what is specified in the MD5 Hash Verification field
         // of the licensing product that will be used with this check.
-        $licensing_secret_key = 'ak4762';
         //$licensing_secret_key = 'itservice';
+		$licensing_secret_key = 'ak4762';
         // The number of days to wait between performing remote license checks
         $localkeydays = 15;
         // The number of days to allow failover for after local key expiry
@@ -1872,8 +1872,13 @@ class WCE_API{
 							$sync_log[0] = true;
 							update_user_meta($customer, 'debtor_number', $debtor_number);
 							array_push($sync_log, array('status' => __('success', 'woocommerce-e-conomic-integration'), 'user_id' => $customer, 'msg' => __('New user '.$debtor_name[0].' '.$debtor_name[1].' with customer role created!', 'woocommerce-e-conomic-integration') ));	
+							if(!$wpdb->query ("SELECT * FROM wce_customers WHERE email='".$debtor_email."'")){
+								$wpdb->insert ("wce_customers", array('user_id' => $customer, 'customer_number' => $debtor_number, 'email' => $debtor_email, 'synced' => 1), array('%d', '%s', '%s', '%d'));
+							}
 						}else{
-							logthis($customer);
+							if(!$wpdb->query ("SELECT * FROM wce_customers WHERE email='".$debtor_email."'")){
+								$wpdb->insert ("wce_customers", array('user_id' => 0, 'customer_number' => $debtor_number, 'email' => $debtor_email, 'synced' => 0), array('%d', '%s', '%s', '%d'));
+							}
 						}
 					}								
 				}
