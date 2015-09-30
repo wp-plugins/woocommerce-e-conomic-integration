@@ -1,0 +1,511 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce e-conomic Integration\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-08-31 20:58+0530\n"
+"PO-Revision-Date: 2015-08-31 20:59+0530\n"
+"Last-Translator: admin <log@uniwin.se>\n"
+"Language-Team: \n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Generator: Poedit 1.7.6\n"
+"X-Loco-Target-Locale: fi_FI\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../class-economic-api.php:1071 ../class-economic-api.php:1077
+#: ../class-economic-api.php:1091 ../class-economic-api.php:1100
+#: ../class-economic-api.php:1264 ../class-economic-api.php:1538
+#: ../class-economic-api.php:1548 ../class-economic-api.php:1556
+#: ../class-economic-api.php:1678
+msgid "success"
+msgstr "menestys"
+
+#: ../class-economic-api.php:1071
+msgid ""
+"Order not synced, because not an e-conomic order! Check \"Aktivera alla "
+"beställningar synkning\" to sync all order."
+msgstr ""
+"Jotta ei synkronoitu, koska ei ole e-conomic tilauksen! Tarkista &quot;"
+"Aktivera alla beställningar synkning&quot; synkronoimaan kaikki "
+"järjestyksessä."
+
+#: ../class-economic-api.php:1077 ../class-economic-api.php:1091
+msgid "Order synced successfully"
+msgstr "Order synkronoitu onnistuneesti"
+
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1267 ../class-economic-api.php:1274
+#: ../class-economic-api.php:1279 ../class-economic-api.php:1502
+#: ../class-economic-api.php:1541 ../class-economic-api.php:1551
+#: ../class-economic-api.php:1664 ../class-economic-api.php:1681
+msgid "fail"
+msgstr "ei läpäissyt"
+
+#: ../class-economic-api.php:1087 ../class-economic-api.php:1094
+#: ../class-economic-api.php:1541
+msgid "Sync failed, please try again later!"
+msgstr "Synkronointi epäonnistui, yritä myöhemmin uudelleen!"
+
+#: ../class-economic-api.php:1100
+msgid "All orders were already synced!"
+msgstr "Kaikki tilaukset olivat jo synkronoitu!"
+
+#: ../class-economic-api.php:1264
+msgid "Product synced successfully"
+msgstr "Tuotteen synkronoitu onnistuneesti"
+
+#: ../class-economic-api.php:1267
+msgid ""
+"Product not synced, someting went wrong. Please check the \"Activate product "
+"sync\" settings!"
+msgstr ""
+"Tuote ei synkronoida, jotain meni pieleen. Tarkista \"Aktivoi tuote "
+"synkronointiasetuksia\"!"
+
+#: ../class-economic-api.php:1274
+msgid "Product not synced, SKU is empty!"
+msgstr "Tuote ei synkronoida, SKU on tyhjä!"
+
+#: ../class-economic-api.php:1279
+msgid "Product not synced, product title is empty!"
+msgstr "Tuotetta ei synkronoitu, tuote otsikko on tyhjä!"
+
+#: ../class-economic-api.php:1502 ../class-economic-api.php:1664
+msgid "Could not create e-conomic client, please try again later!"
+msgstr "Ei voitu luoda e-conomic client, yritä myöhemmin uudelleen!"
+
+#: ../class-economic-api.php:1538
+msgid "Customer synced successfully"
+msgstr "Asiakas synkronoitu onnistuneesti"
+
+#: ../class-economic-api.php:1548
+msgid "Guest customer synced successfully"
+msgstr "Asiakas synkronoitu onnistuneesti"
+
+#: ../class-economic-api.php:1551
+msgid "Guest customer sync failed, please try again later!"
+msgstr "Synkronointi epäonnistui, yritä myöhemmin uudelleen!"
+
+#: ../class-economic-api.php:1556
+msgid "All customers were already synced!"
+msgstr "Kaikki asiakkaat olivat jo synkronoitu!"
+
+#: ../class-economic-api.php:1678
+msgid "Shipping synced successfully"
+msgstr "Toimitus synkronoitu onnistuneesti"
+
+#: ../class-economic-api.php:1681
+msgid "Shipping not synced, please try again!"
+msgstr "Merenkulku ei synkronoitu, yritä uudelleen!"
+
+#: ../economic-payment.php:23 ../economic-payment.php:60
+msgid "e-conomic Invoice"
+msgstr "e-conomic laskun"
+
+#: ../economic-payment.php:24 ../economic-payment.php:67
+msgid "Receive an invoice from e-conomic in no time!"
+msgstr "Vastaanottaa laskun e-conomic hetkessä!"
+
+#: ../economic-payment.php:50
+msgid "Enable/Disable"
+msgstr "Päällä/Pois"
+
+#: ../economic-payment.php:52 ../economic-payment.php:53
+msgid "Enable e-conomic Invoice Payment"
+msgstr "Ota e-conomic laskun maksu"
+
+#: ../economic-payment.php:57
+msgid "Title"
+msgstr "Otsikko"
+
+#: ../economic-payment.php:59
+msgid "This controls the title which the user sees during checkout."
+msgstr "Tämä kontrolloi otsikkoa, jonka käyttäjä näkee maksamisen aikana."
+
+#: ../economic-payment.php:64
+msgid "Description"
+msgstr "Kuvaus"
+
+#: ../economic-payment.php:66
+msgid "Payment method description that the customer will see on your checkout."
+msgstr "Maksutapa kuvaus että asiakas näkee teidän kassalla."
+
+#: ../economic-payment.php:71
+msgid "Instructions"
+msgstr "Ohjeet"
+
+#: ../economic-payment.php:73
+msgid "Instructions that will be added to the thank you page and emails."
+msgstr "Ohjeet, jotka lisätään kiitos sivun ja sähköposteja."
+
+#: ../economic-payment.php:113
+msgid "Awaiting e-conomic Invoice payment"
+msgstr "E-conomic laskun maksamista"
+
+#: ../woocommerce-economic.php:77 ../woocommerce-economic.php:107
+#: ../woocommerce-economic.php:135 ../woocommerce-economic.php:164
+msgid "<br>Sync status: "
+msgstr "<br> Sync tila:"
+
+#: ../woocommerce-economic.php:78
+msgid "Product SKU: "
+msgstr "Tuotteen SKU:"
+
+#: ../woocommerce-economic.php:79
+msgid "Product Name: "
+msgstr "Nimi"
+
+#: ../woocommerce-economic.php:80 ../woocommerce-economic.php:109
+#: ../woocommerce-economic.php:137 ../woocommerce-economic.php:166
+msgid "Sync message: "
+msgstr "Manuaalisesti synkronoida yhteystiedot"
+
+#: ../woocommerce-economic.php:83
+msgid "Products are synchronized without problems."
+msgstr "Tuotteita on synkronoitu ilman ongelmia."
+
+#: ../woocommerce-economic.php:88 ../woocommerce-economic.php:116
+#: ../woocommerce-economic.php:144 ../woocommerce-economic.php:173
+msgid "Something went wrong."
+msgstr "Oho, jotakin meni pieleen."
+
+#: ../woocommerce-economic.php:112
+msgid "Orders are synchronized without problems."
+msgstr "Tilaukset synkronoidaan ilman ongelmia."
+
+#: ../woocommerce-economic.php:140
+msgid "Contacts synchronized without problems."
+msgstr "Yhteydet synkronoitu ilman ongelmia."
+
+#: ../woocommerce-economic.php:165
+msgid "Shipping type: "
+msgstr "Toimitus type:"
+
+#: ../woocommerce-economic.php:169
+msgid "Delivery synchronized without problems."
+msgstr "Toimitus synkronoitu ilman ongelmia."
+
+#: ../woocommerce-economic.php:237
+msgid "License Key is Invalid!"
+msgstr "Lisenssi ei kelpaa"
+
+#: ../woocommerce-economic.php:242
+msgid "Your integration works fine!"
+msgstr "Sinun integrointi toimii hyvin!"
+
+#: ../woocommerce-economic.php:245
+msgid "Your e-conomic Token ID or License Key is not valid!"
+msgstr "E-conomic tunnuksen tunnus eli anniskeluoikeudet avain ei kelpaa."
+
+#: ../woocommerce-economic.php:249
+msgid "Something went wrong, please try again later!"
+msgstr "Jokin meni pieleen, yritä myöhemmin uudelleen!"
+
+#: ../woocommerce-economic.php:267
+msgid "WooCommerce e-conomic Integration: License Key Invalid!"
+msgstr "WooCommerce e-conomic integraatio: lisenssi ei kelpaa!"
+
+#: ../woocommerce-economic.php:267 ../woocommerce-economic.php:989
+msgid "Get license Key"
+msgstr "Panna anniskeluoikeudet avain"
+
+#: ../woocommerce-economic.php:304
+msgid "<h3>WooCommerce e-conomic Integration</h3>"
+msgstr "<h3>WooCommerce e-conomic integraatio</h3>"
+
+#: ../woocommerce-economic.php:305
+msgid ""
+"<p>You’ve just installed WooCommerce e-conomic Integration by wooconomics. "
+"Please use the plugin options page to setup your integration.</p>"
+msgstr ""
+"<p> Olet juuri asentanut WooCommerce e-conomic Integration by WooBill. Käytä "
+"plugin vaihtoehtoja sivun setup integraatiota. </p>"
+
+#: ../woocommerce-economic.php:816
+msgid " Please save the settings before leaving this page!"
+msgstr "Tallenna asetukset ennen lähtöä tämän sivun!"
+
+#: ../woocommerce-economic.php:819
+msgid " Click here to generate token access ID"
+msgstr "Klikkaa tästä tuottaa periaatteellinen mahdollisuus ID"
+
+#: ../woocommerce-economic.php:881
+msgid "Create invoice"
+msgstr "Luo lasku"
+
+#: ../woocommerce-economic.php:882
+msgid "Create order"
+msgstr "Luo tilaus"
+
+#: ../woocommerce-economic.php:901
+msgid ""
+"<span><i>e-conomic client not loaded properly, please refresh the page to "
+"load properly.</i></span>"
+msgstr ""
+"<span><i>e-conomic client ladattu väärin, päivitä sivu latautuu kunnolla.</"
+"i></span>"
+
+#: ../woocommerce-economic.php:989
+msgid "License Key Invalid"
+msgstr "Lisenssi ei kelpaa"
+
+#: ../woocommerce-economic.php:1012 ../woocommerce-economic.php:1017
+msgid "General settings"
+msgstr "Yleiset asetukset"
+
+#: ../woocommerce-economic.php:1019
+msgid "Token ID"
+msgstr "Tunnuksen tunnus"
+
+#: ../woocommerce-economic.php:1019
+msgid "Token access ID from e-conomic."
+msgstr "Oma app ID e-conomic."
+
+#: ../woocommerce-economic.php:1021
+msgid "License key"
+msgstr "Lisenssiavain:"
+
+#: ../woocommerce-economic.php:1021
+msgid "This is the License key you received from us by mail."
+msgstr "Näin olet saanut meiltä postitse anniskeluoikeudet avain."
+
+#: ../woocommerce-economic.php:1039
+msgid "Activate all orders sync"
+msgstr "Aktivoi kaikki tilaukset synkronointi"
+
+#: ../woocommerce-economic.php:1039
+msgid ""
+"Sync all orders from WooCommerce e-conomic, regardless of whether the "
+"customer chooses another payment option (eg; Paypal, Dibs, Stripe, Payson, "
+"etc.) <br><i style=\"margin-left:25px; color: #F00;\">If you are unsure what "
+"to choose here, we recommend you do not select this option.</i>"
+msgstr ""
+"Synkronoi kaikki tilaukset WooCommerce e-conomic riippumatta siitä, onko "
+"asiakas valitsee toisen maksutavan (esim., Paypa, Dibs, raita, Payson, "
+"jne.)<br><i style=\"margin-left:25px; color: #F00;\">Jos et tiedä mitä "
+"valita täällä, suosittelemme, että et valitse tämä vaihtoehto.</i>"
+
+#: ../woocommerce-economic.php:1041
+msgid "Activate old orders sync"
+msgstr "Aktivoida vanha tilaukset synkronointi"
+
+#: ../woocommerce-economic.php:1041
+msgid "Also sync orders created before wooconomics installation."
+msgstr "Synkronoida myös tilauksiin ennen wooconomics asennusta."
+
+#: ../woocommerce-economic.php:1043
+msgid "Activate product sync"
+msgstr "Aktivoi tuote synkronointi"
+
+#: ../woocommerce-economic.php:1043
+msgid "Sync product information from WooCommerce to economic."
+msgstr "Tuotteen tiedot WooCommerce talouden."
+
+#: ../woocommerce-economic.php:1045
+msgid "Create"
+msgstr "Luo"
+
+#: ../woocommerce-economic.php:1045
+msgid "Create e-conomic order or invoice?"
+msgstr "E-conomic tilauksen tai laskun luominen"
+
+#: ../woocommerce-economic.php:1048
+msgid "Product group"
+msgstr "Tuoteryhmä"
+
+#: ../woocommerce-economic.php:1048
+msgid "e-conomic product group to which new products are added."
+msgstr "e-conomic tuoteryhmä, johon lisätään uusia tuotteita."
+
+#: ../woocommerce-economic.php:1050
+msgid "Product prefix"
+msgstr "Tuotteen etuliite"
+
+#: ../woocommerce-economic.php:1050
+msgid "Prefix added to the products stored to e-conomic from woocommerce"
+msgstr "Etuliite lisätään varastoitujen e-conomic woocommerce tuotteiden"
+
+#: ../woocommerce-economic.php:1052
+msgid "Customer group"
+msgstr "Asiakasryhmä"
+
+#: ../woocommerce-economic.php:1052
+msgid "e-conomic customer group to which new customers are added."
+msgstr "e-conomic asiakasryhmä, johon lisätään uusia asiakkaita."
+
+#: ../woocommerce-economic.php:1068
+msgid "Manual functions"
+msgstr "Manuaalinen Funktiot"
+
+#: ../woocommerce-economic.php:1081
+msgid "Welcome!"
+msgstr "Tervetuloa!"
+
+#: ../woocommerce-economic.php:1095 ../woocommerce-economic.php:1306
+#: ../woocommerce-economic.php:1420
+msgid "Support"
+msgstr "Tuki"
+
+#: ../woocommerce-economic.php:1106
+msgid ""
+"Specifies basic settings for the e-conomic integration and you can control "
+"which parts you want to sync to e-conomic"
+msgstr ""
+"Määrittää perusasetukset e-conomic yhdentymistä ja tarkistaa mitkä osat "
+"haluat synkronoida e-conomic"
+
+#: ../woocommerce-economic.php:1115
+msgid "Description Accounting settings."
+msgstr "Kuvaus käytönvalvonta-asetukset."
+
+#: ../woocommerce-economic.php:1305
+msgid "Our most frequently asked questions FAQ"
+msgstr "Useimmin kysytyt kysymykset FAQ"
+
+#: ../woocommerce-economic.php:1318
+msgid "Save changes"
+msgstr "Tallenna muutokset"
+
+#: ../woocommerce-economic.php:1320 ../woocommerce-economic.php:1322
+msgid "Test connection"
+msgstr "Testaa yhteys"
+
+#: ../woocommerce-economic.php:1324
+msgid "NOTE! Save changes before testing the connection"
+msgstr "HUOM! Tallenna muutokset ennen yhteyden testaamista"
+
+#: ../woocommerce-economic.php:1334
+msgid ""
+"The synchronization can take a long time depending on how many customers to "
+"be imported. \\ nA message will appear on this page when the synchronization "
+"is complete. Do not leave this page, which will suspended the import!"
+msgstr ""
+"Synkronointi voi kestää kauan riippuen siitä, kuinka monet asiakkaat "
+"tuotava. \\n A viesti näkyy tällä sivulla, kun synkronointi on päättynyt. "
+"Älä jätä tätä sivua, joka keskeytettiin tuonti!"
+
+#: ../woocommerce-economic.php:1334
+msgid "Manual sync contacts"
+msgstr "Manuaalisesti synkronoida yhteystiedot"
+
+#: ../woocommerce-economic.php:1336
+msgid "Sync customers created manually in woocommerce dashboard."
+msgstr "Sync asiakasta luotu manuaalisesti woocommerce kojelauta."
+
+#: ../woocommerce-economic.php:1339
+msgid ""
+"The synchronization can take a long time depending on how many orders to be "
+"exported. \\ nA message will appear on this page when the synchronization is "
+"complete. Do not leave this page, which will suspended the import!"
+msgstr ""
+"Synkronointi voi kestää kauan riippuen siitä, kuinka monta tilausta vietävä. "
+"\\n A viesti näkyy tällä sivulla, kun synkronointi on päättynyt. Älä jätä "
+"tätä sivua, joka keskeytettiin tuonti!"
+
+#: ../woocommerce-economic.php:1339
+msgid "Manual syncing orders/invoices"
+msgstr "Manuaalinen synkronointi tilaukset ja laskut"
+
+#: ../woocommerce-economic.php:1341
+msgid ""
+"Synchronizes all orders that failed to synchronize. (default sync is set to "
+"General Settings-> Create options)"
+msgstr ""
+"Synkronoi kaikki tilaukset, että synkronointi epäonnistui. (synkronoinnin on "
+"asetettu yleiset asetukset-> luo asetukset)"
+
+#: ../woocommerce-economic.php:1344
+msgid ""
+"The synchronization can take a long time depending on how many products that "
+"will be exported. \\ nA message will appear on this page when the "
+"synchronization is complete. Do not leave this page, which will suspended "
+"the import!"
+msgstr ""
+"Synkronointi voi kestää kauan riippuen siitä, kuinka paljon tuotteita, jotka "
+"viedään. \\n A viesti näkyy tällä sivulla, kun synkronointi on päättynyt. "
+"Älä jätä tätä sivua, joka keskeytettiin tuonti!"
+
+#: ../woocommerce-economic.php:1344
+msgid "Manual sync products"
+msgstr "Manuaalisen synkronoinnin tuotteet"
+
+#: ../woocommerce-economic.php:1346
+msgid ""
+"Send all products to your e-conomic. If you have many products, it may take "
+"a while."
+msgstr ""
+"Lähetä kaikki tuotteet e-conomic. Jos sinulla on useita tuotteita, se voi "
+"kestää jonkin aikaa."
+
+#: ../woocommerce-economic.php:1349
+msgid ""
+"A message will appear on this page when the synchronization is complete. Do "
+"not leave this page, which will suspended the import!"
+msgstr ""
+"Ilmestyy viesti tällä sivulla, kun synkronointi on päättynyt. Älä jätä tätä "
+"sivua, joka keskeytettiin tuonti!"
+
+#: ../woocommerce-economic.php:1349
+msgid "Manual sync delivery methods"
+msgstr "Manuaalisen synkronoinnin toimitustavat"
+
+#: ../woocommerce-economic.php:1351
+msgid "Send all delivery method costs to your e-conomic."
+msgstr "Lähetä kaikki toimitus menetelmää kustannukset e-conomic."
+
+#: ../woocommerce-economic.php:1373
+msgid "Installation Support"
+msgstr "Asennuksen tuki"
+
+#: ../woocommerce-economic.php:1381 ../woocommerce-economic.php:1428
+msgid "Company"
+msgstr "Yritys"
+
+#: ../woocommerce-economic.php:1386 ../woocommerce-economic.php:1433
+msgid "Name"
+msgstr "Nimi"
+
+#: ../woocommerce-economic.php:1391 ../woocommerce-economic.php:1438
+msgid "Phone"
+msgstr "Puhelin"
+
+#: ../woocommerce-economic.php:1396 ../woocommerce-economic.php:1443
+msgid "Email"
+msgstr "Emali"
+
+#: ../woocommerce-economic.php:1401 ../woocommerce-economic.php:1448
+msgid "Subject"
+msgstr "Aihe"
+
+#: ../woocommerce-economic.php:1406 ../woocommerce-economic.php:1454
+msgid "Send"
+msgstr "Lähetä"
+
+#~ msgid "Product not synced, please try again!"
+#~ msgstr "Tuotetta ei synkronoitu, yritä uudelleen!"
+
+#~ msgid "Your e-conomic Token ID and Private app ID are not valid!"
+#~ msgstr "E-conomic Token ID ja yksityiset app ID eivät ole voimassa!"
+
+#~ msgid "Private app ID"
+#~ msgstr "Oma app ID"
+
+#~ msgid "Private app ID from e-conomic."
+#~ msgstr "Oma app ID e-conomic."
+
+#~ msgid ""
+#~ "<p>You’ve just installed WooCommerce e-conomic Integration by WooBill. "
+#~ "Please use the plugin options page to setup your integration.</p>"
+#~ msgstr ""
+#~ "<p> Olet juuri asentanut WooCommerce e-conomic Integration by WooBill. "
+#~ "Käytä plugin vaihtoehtoja sivun setup integraatiota. </p>"
