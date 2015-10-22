@@ -7,8 +7,8 @@ Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
 Tested up to:      4.3
-Stable tag:        1.9.3
-Version:           1.9.3
+Stable tag:        1.9.4
+Version:           1.9.4
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
@@ -93,6 +93,10 @@ Read the FAQ or business hours mail support except weekends and holidays.
 http://wooconomics.com/category/faq/
 
 == Changelog ==
+
+= 1.9.4 =
+* Vat Zone for Debtors/Customers created at e-conomic is updated based on the WooCommerce Tax settings.
+* Order synced when Admin add orders manually at admin dashboard.
 
 = 1.9.3 =
 * Bug fixes.

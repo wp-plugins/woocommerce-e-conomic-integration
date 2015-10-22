@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.9.3
+ * Version: 1.9.4
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -397,30 +397,83 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		***********************************************************************************************************/
 		
 		
+		function get_current_user_role() {
+			require_once(ABSPATH . 'wp-includes/functions.php');
+			require_once(ABSPATH . 'wp-includes/pluggable.php');
+		
+			global $wp_roles;
+			global $current_user;
+			get_currentuserinfo();
+			$roles = $current_user->roles;
+			$role = array_shift($roles);
+			return isset($wp_roles->role_names[$role]) ? translate_user_role($wp_roles->role_names[$role] ) : false;
+		}
+		
+		
 		//Save product to economic from woocommerce.
 		add_action('save_post', 'woo_save_object_to_economic', 2, 2);
 		function woo_save_object_to_economic( $post_id, $post) {
-		  if(!get_option('woo_save_object_to_economic')){
-			  logthis("woo_save_object_to_economic existing because disabled!");
-			  return;
-		  }
-		  include_once("class-economic-api.php");
-		  $wce = new WC_Economic();
-		  $wce_api = new WCE_API();
-		  if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
-			  logthis("woo_save_object_to_economic existing because licensen key validation not passed.");
-			  return false;
-		  }
-		  logthis("woo_save_object_to_economic called by post_id: " . $post_id . " posttype: " . $post->post_type);
-		  if ( !$post ) return $post_id;
-		  if ( is_int( wp_is_post_revision( $post_id ) ) ) return;
-		  if( is_int( wp_is_post_autosave( $post_id ) ) ) return;
-		  if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) return $post_id;
-		  if ($post->post_type != 'product' || $post->post_status != 'publish') return $post_id;
-		  logthis("woo_save_object_to_economic calling woo_save_".$post->post_type."_to_economic");
-		  do_action('woo_save_'.$post->post_type.'_to_economic', $post_id, $post);
+			if(!get_option('woo_save_object_to_economic')){
+				logthis("woo_save_object_to_economic existing because disabled!");
+				return;
+			}
+			include_once("class-economic-api.php");
+			$wce = new WC_Economic();
+			$wce_api = new WCE_API();
+			if($wce->is_license_key_valid() != "Active" || !$wce_api->create_API_validation_request()){
+				logthis("woo_save_object_to_economic existing because licensen key validation not passed.");
+				return false;
+			}
+			logthis("woo_save_object_to_economic called by post_id: " . $post_id . " posttype: " . $post->post_type);
+			if ( !$post ) return $post_id;		  
+			if ( is_int( wp_is_post_revision( $post_id ) ) ) {
+				logthis('woo_save_object_to_economic exit on wp_is_post_revision'); 
+				return;
+			}
+			
+			if( is_int( wp_is_post_autosave( $post_id ) ) ) {
+				logthis('woo_save_object_to_economic exit on wp_is_post_autosave'); 
+				return;
+			}
+			if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+				logthis('woo_save_object_to_economic exit on wp_is_post_autosave'); 
+				return $post_id;
+			}
+			
+			//logthis($post->post_status);
+			
+			if($post->post_type == 'shop_order' && $post->post_status != 'auto-draft' && $post->post_status != 'wc-cancelled'){
+				$order = new WC_Order($post_id);
+				if($order->billing_first_name == ''){
+					logthis('woo_save_customer_to_economic exiting, because order data is empty.');
+					//logthis($order);
+					return;
+				}
+				if(get_current_user_role() != 'Administrator'){
+					//logthis(get_current_user_role());
+					logthis('woo_save_customer_to_economic exiting, because save_customer is not called by administrator.');
+					return;
+				}
+				//logthis($order->billing_first_name);
+				logthis("woo_save_object_to_economic calling woo_save_customer_to_economic");
+				do_action('woo_save_'.$post->post_type.'_to_economic', $post_id, $post);
+				return;
+			}
+			
+			
+			if ($post->post_type != 'product' || $post->post_status != 'publish') {
+				logthis('woo_save_object_to_economic exit on post_type: '.$post->post_type.' and post_status: '.$post->post_status); 
+				return;
+			}
+		  
+			if($post->post_type == 'product'){
+				logthis("woo_save_object_to_economic calling woo_save_".$post->post_type."_to_economic");
+				do_action('woo_save_'.$post->post_type.'_to_economic', $post_id, $post);
+				return;
+			}
+		  
 		}
-		
+				
 		add_action('woo_save_product_to_economic', 'woo_save_product_to_economic', 1,2);
 		function woo_save_product_to_economic($post_id, $post) {
 		  include_once("class-economic-api.php");
@@ -549,15 +602,23 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		 * Create new customer at economic with minimial required data.
 		 */
 		add_action('woocommerce_checkout_order_processed', 'woo_save_customer_to_economic');
+		add_action('woo_save_shop_order_to_economic', 'woo_save_customer_to_economic');
+		
 		function woo_save_customer_to_economic($order_id) {
 			try{
 				include_once("class-economic-api.php");
+				$order = new WC_Order($order_id);
 				global $wpdb;
-				$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
+				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id." AND synced=1")){
+					logthis('syncing order for update.');
+				}elseif($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id." AND synced=0")){
+					logthis('syncing order failed previously');
+				}else{
+					$wpdb->insert ("wce_orders", array('order_id' => $order_id, 'synced' => 0), array('%d', '%d'));
+				}
 				$options = get_option('woocommerce_economic_general_settings');
 				$wce = new WC_Economic();
 				$wce_api = new WCE_API();
-				$order = new WC_Order($order_id);
 				if($order->customer_user != 0){
 					$user = new WP_User($order->customer_user);
 				}else{
@@ -727,7 +788,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', 1.93);
+			update_option('economic_version', 1.94);
 			update_option('woo_save_object_to_economic', true);
 		}
 		
@@ -764,7 +825,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			if(floatval($economic_version) < 1.7 ){
 				$wpdb->query("ALTER TABLE ".$wce_customers." ADD email VARCHAR(320) DEFAULT NULL AFTER customer_number");
 			}
-			update_option('economic_version', 1.93);
+			update_option('economic_version', 1.94);
 			update_option('woo_save_object_to_economic', true);
 		}
 		

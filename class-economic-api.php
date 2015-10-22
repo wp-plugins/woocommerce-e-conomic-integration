@@ -104,6 +104,37 @@ class WCE_API{
 	  'shipping_first_name'
 	);
 	
+	public $eu = array(
+		'BE' => 'Belgium',
+		'BG' => 'Bulgaria',
+		'CZ' => 'Czech Republic',
+		'DK' => 'Denmark',
+		'GE' => 'Germany',
+		'EE' => 'Estonia',
+		'IE' => 'Republic of Ireland',
+		'EL' => 'Greece',
+		'ES' => 'Spain',
+		'FR' => 'France',
+		'HR' => 'Croatia',
+		'IT' => 'Italy',
+		'CY' => 'Cyprus',
+		'LV' => 'Latvia',
+		'LT' => 'Lithuania',
+		'LU' => 'Luxembourg',
+		'HU' => 'Hungary',
+		'MT' => 'Malta',
+		'NL' => 'Netherlands',
+		'AT' => 'Austria',
+		'PL' => 'Poland',
+		'PT' => 'Portugal',
+		'RO' => 'Romania',
+		'SI' => 'Slovenia',
+		'SK' => 'Slovakia',
+		'FI' => 'Finland',
+		'SE' => 'Sweden',
+		'GB' => 'United Kingdom'
+	  );
+	
 	public $product_lock;
 	
 	//public $shipping_product_id;
@@ -563,10 +594,27 @@ class WCE_API{
 			
 			$debtor_handle_array = (array) $debtor_handle;	
 			
+			$tax_based_on = get_option('woocommerce_tax_based_on');
+			$vatZone = 'HomeCountry';
+			
+			if($tax_based_on == 'billing'){
+				$vatZone = $this->woo_get_debtor_vat_zone('billing', $user, $order);
+			}elseif($tax_based_on == 'shipping'){
+				$vatZone = $this->woo_get_debtor_vat_zone('shipping', $user, $order);
+			}else{
+				$vatZone = 'HomeCountry';
+			}
+			
 			if (!empty($debtor_handle_array)) {
 				logthis("woo_get_debtor_handle_from_economic debtor found for user.");
 				//logthis($user != NULL? $user->ID : $order->billing_email);
-				//logthis($debtor_handle);
+				logthis($debtor_handle);
+				$client->Debtor_SetVatZone(array(
+						//'number' => $user->ID,
+						'debtorHandle' => $debtor_handle,
+						'value' => $vatZone
+					)
+				);
 			}
 			else {
 				// The debtor doesn't exist - lets create it
@@ -583,13 +631,13 @@ class WCE_API{
 				
 					$debtor_grouphandle = $client->DebtorGroup_FindByNumber(array(
 						'number' => $debtor_grouphandle_meta
-					))->DebtorGroup_FindByNumberResult;
+					))->DebtorGroup_FindByNumberResult;					
 					
 					$debtor_handle = $client->Debtor_Create(array(
 						//'number' => $user->ID,
 						'debtorGroupHandle' => $debtor_grouphandle,
 						'name' => $name,
-						'vatZone' => 'EU' // todo remember to make switch over eu countries, your own and international.
+						'vatZone' => $vatZone
 					))->Debtor_CreateResult;
 					update_user_meta($user->ID, 'debtor_number', $debtor_handle->Number);
 					logthis("woo_get_debtor_handle_from_economic debtor created using user object: " . $name);
@@ -607,7 +655,7 @@ class WCE_API{
 						//'number' => $debtor_number,
 						'debtorGroupHandle' => $debtor_grouphandle,
 						'name' => $order->last_name.' '.$order->first_name,
-						'vatZone' => 'EU' // todo remember to make switch over eu countries, your own and international.
+						'vatZone' => $vatZone
 					))->Debtor_CreateResult;
 					logthis("woo_get_debtor_handle_from_economic debtor created using order object: " . $order->billing_email);
 				}
@@ -622,6 +670,39 @@ class WCE_API{
 			logthis("woo_get_debtor_handle_from_economic could get or create debtor handle: " . $exception->getMessage());
 			//$wce_api->debug_client($client);
 			return null;
+		}
+	}
+	
+	/**
+     * Get debtor debtor vat Zone from WooCommerce user object or order object.
+     *
+     * @access public
+     * @param Type of address billing or shipping, WP user object and WC order object
+     * @return vatZone string.
+     */
+	public function woo_get_debtor_vat_zone($type, WP_User $user = NULL, WC_Order $order = NULL){
+		$default_country = get_option('woocommerce_default_country');
+		$address = $type.'_country';
+		logthis('woo_get_debtor_vat_zone running...');
+		//logthis($order->$address.' == '.$default_country);
+		if(is_object($order)){
+			if($order->$address == $default_country){
+				return 'HomeCountry';
+			}elseif(isset($this->eu[$order->$address])){
+				return 'EU';
+			}else{
+				return 'Abroad';
+			}
+		}
+		if(is_object($user)){
+			$userCountry = get_user_meta($user->ID, $address, true);
+			if($userCountry == $default_country){
+				return 'HomeCountry';
+			}elseif(isset($this->eu[$userCountry])){
+				return 'EU';
+			}else{
+				return 'Abroad';
+			}
 		}
 	}
 	
@@ -909,12 +990,30 @@ class WCE_API{
 				'value' => $country
 			));
 			
+			$orderLines = $client->Order_GetLines(array(
+				'orderHandle' => $order_handle,
+				'value' => $country
+			))->Order_GetLinesResult;
+			
+			//logthis($orderLines);
+			
+			if(isset($orderLines->OrderLineHandle)){
+				if(is_array($orderLines->OrderLineHandle)){
+					foreach($orderLines->OrderLineHandle as $orderLine){
+						$client->OrderLine_Delete(array(
+							'orderLineHandle' => $orderLine,
+						));
+					}
+				}else{
+					$client->OrderLine_Delete(array(
+						'orderLineHandle' => $orderLines->OrderLineHandle,
+					));
+				}
+			}
 			
 			logthis("save_order_to_economic call woo_handle_order_lines_to_economic.");			
 			$this->woo_handle_order_lines_to_economic($order, $order_handle, $client, $refund);
-			
-			
-			
+
 			//logthis("SELECT * FROM wce_orders WHERE order_id=".$order->id.": ".$wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";"));
 		
 			if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
@@ -949,10 +1048,11 @@ class WCE_API{
 			'otherReference' => $reference
 		))->Order_FindByOtherReferenceResult;
 		
+		//logthis($economic_order);
 	
-		if(isset($economic_order->Id) && !empty($economic_order->Id)){
+		if(isset($economic_order->OrderHandle->Id) && !empty($economic_order->OrderHandle->Id)){
 			logthis("woo_get_order_number_from_economic orderId " . $economic_order->Id . " exists");
-			return $economic_order;
+			return $economic_order->OrderHandle;
 		}else{
 			logthis("woo_get_order_number_from_economic order doesn't exists, creating new order!");
 			$economic_order = $client->Order_Create(array(
@@ -1024,13 +1124,17 @@ class WCE_API{
      * @return array log
      */
 	public function woo_create_orderline_handle_at_economic($order_handle, $product_id, SoapClient &$client){
-		$orderline_handle = $client->OrderLine_Create(array(
-			'orderHandle' => $order_handle
-		))->OrderLine_CreateResult;
-		logthis("woo_create_orderline_handle_at_economic added line id: " . $orderline_handle->Id . " number: " . $orderline_handle->Number . " product_id: " . $product_id);
+		
 		$product_handle = $client->Product_FindByNumber(array(
 			'number' => $product_id
 		))->Product_FindByNumberResult;
+		
+		$orderline_handle = $client->OrderLine_Create(array(
+			'orderHandle' => $order_handle
+		))->OrderLine_CreateResult;
+		
+		logthis("woo_create_orderline_handle_at_economic added line id: " . $orderline_handle->Id . " number: " . $orderline_handle->Number . " product_id: " . $product_id);
+		
 		$client->OrderLine_SetProduct(array(
 			'orderLineHandle' => $orderline_handle,
 			'valueHandle' => $product_handle
@@ -1158,7 +1262,7 @@ class WCE_API{
 		
 		
 		
-		logthis("save_product_to_economic syncing product - sku: " . $product->sku . " title: " . $product->get_title() . " desc: " . $product->post->post_content);
+		logthis("save_product_to_economic syncing product - sku: " . $product->sku . " title: " . $product->get_title());
 		try	{
 			$product_sku = $this->woo_get_product_sku($product);
 			//logthis("save_product_to_economic - trying to find product in economic with product number: ".$product_sku);
