@@ -262,17 +262,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$options = get_option('woocommerce_economic_general_settings');
 				$order_options = get_option('woocommerce_economic_order_settings');
 				$message .= '<tr><td align="right" colspan="1"><strong>Allmänna inställningar</strong></td></tr>';
-				$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.$options['license-key'].'</td></tr>';
-				$message .= '<tr><td align="right">Token ID: </td><td align="left">'.$options['token'].'</td></tr>';
-				$message .= '<tr><td align="right">Activate all orders sync: </td><td align="left">'.$options['activate-allsync'].'</td></tr>';
-				$message .= '<tr><td align="right">Activate old orders sync: </td><td align="left">'.$options['activate-oldordersync'].'</td></tr>';
-				$message .= '<tr><td align="right">Activate product sync: </td><td align="left">'.$options['product-sync'].'</td></tr>';
-				$message .= '<tr><td align="right">Run scheduled product stock sync: </td><td align="left">'.$options['scheduled-product-sync'].'</td></tr>';
-				$message .= '<tr><td align="right">Create: </td><td align="left">'.$options['sync-order-invoice'].'</td></tr>';
-				$message .= '<tr><td align="right">Produktgrupp: </td><td align="left">'.$options['product-group'].'</td></tr>';
-				$message .= '<tr><td align="right">Produkt prefix: </td><td align="left">'.$options['product-prefix'].'</td></tr>';
-				$message .= '<tr><td align="right">Kundgrupp: </td><td align="left">'.$options['customer-group'].'</td></tr>';
-				$message .= '<tr><td align="right">Aktivera alla beställningar synkning: </td><td align="left">'.$options['activate-allsync'].'</td></tr>';
+				$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.array_key_exists('license-key', $options)? $options['license-key'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Token ID: </td><td align="left">'.array_key_exists('token', $options)? $options['token'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Activate all orders sync: </td><td align="left">'.array_key_exists('activate-allsync', $options)? $options['activate-allsync'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Activate old orders sync: </td><td align="left">'.array_key_exists('activate-oldordersync', $options)? $options['activate-oldordersync'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Activate product sync: </td><td align="left">'.array_key_exists('product-sync', $options)? $options['product-sync'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Run scheduled product stock sync: </td><td align="left">'.array_key_exists('scheduled-product-sync', $options)? $options['scheduled-product-sync'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Create: </td><td align="left">'.array_key_exists('sync-order-invoice', $options)? $options['sync-order-invoice'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Produktgrupp: </td><td align="left">'.array_key_exists('product-group', $options)? $options['product-group'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Produkt prefix: </td><td align="left">'.array_key_exists('product-prefix', $options)? $options['product-prefix'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Kundgrupp: </td><td align="left">'.array_key_exists('customer-group', $options)? $options['customer-group'] : NULL.'</td></tr>';
+				$message .= '<tr><td align="right">Aktivera alla beställningar synkning: </td><td align="left">'.array_key_exists('activate-allsync', $options)? $options['activate-allsync'] : NULL.'</td></tr>';
 			}
 			
 			$message .= '</table></html></body>';
