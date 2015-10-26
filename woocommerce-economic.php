@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.9.4
+ * Version: 1.9.5
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -282,7 +282,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$headers .= "Content-type: text/html; charset=utf-8 \r\n";
 			//$headers .= "From:".get_option('admin_email')."\r\n";
 			
-            echo wp_mail( 'support@onlineforce.net', 'e-conomic Support', $message , $headers) ? "success" : "error";
+            echo wp_mail( 'support@wooconomics.com', 'e-conomic Support', $message , $headers) ? "success" : "error";
             //die(); // this is required to return a proper result
         }
 		
@@ -466,7 +466,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				return;
 			}
 		  
-			if($post->post_type == 'product'){
+			if($post->post_type == 'product' || $post->post_type == 'product_variation'){
 				logthis("woo_save_object_to_economic calling woo_save_".$post->post_type."_to_economic");
 				do_action('woo_save_'.$post->post_type.'_to_economic', $post_id, $post);
 				return;
@@ -475,6 +475,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		}
 				
 		add_action('woo_save_product_to_economic', 'woo_save_product_to_economic', 1,2);
+		add_action('woo_save_product_variation_to_economic', 'woo_save_product_to_economic', 1,2);
 		function woo_save_product_to_economic($post_id, $post) {
 		  include_once("class-economic-api.php");
 		  $wce = new WC_Economic();
@@ -788,7 +789,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', 1.94);
+			update_option('economic_version', 1.95);
 			update_option('woo_save_object_to_economic', true);
 		}
 		
@@ -825,7 +826,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			if(floatval($economic_version) < 1.7 ){
 				$wpdb->query("ALTER TABLE ".$wce_customers." ADD email VARCHAR(320) DEFAULT NULL AFTER customer_number");
 			}
-			update_option('economic_version', 1.94);
+			update_option('economic_version', 1.95);
 			update_option('woo_save_object_to_economic', true);
 		}
 		

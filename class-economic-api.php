@@ -2,7 +2,7 @@
 //php.ini overriding necessary for communicating with the SOAP server.
 //ini_set('display_errors',1);
 //ini_set('display_startup_errors',1);
-error_reporting(0);
+//error_reporting(1);
 if ( ! function_exists( 'logthis' ) ) {
     function logthis($msg) {
         if(TESTING){
@@ -1392,12 +1392,25 @@ class WCE_API{
 		$products = array();
 		$sync_log = array();
 		$sync_log[0] = true;
-		$args = array('post_type' => 'product', 'nopaging' => true);
+		$args = array('post_type' => array('product'), 'nopaging' => true);
 		$product_query = new WP_Query($args);
 		$posts = $product_query->get_posts();
 		foreach ($posts as $post) {
 			array_push($products, new WC_Product($post->ID));
 		}
+		
+		//Added for 1.9.5 update by Alvin
+		$variation_args = array('post_type' => array('product_variation'), 'nopaging' => true);
+		$product_variation_query = new WP_Query($variation_args);
+		$variation_posts = $product_variation_query->get_posts();
+		foreach ($variation_posts as $variation_post) {
+			$variation_parent_post_id = wp_get_post_parent_id( $variation_post->ID );
+			$variation_parent_post = get_post($variation_parent_post_id);
+			if($variation_parent_post->post_status == 'publish'){
+				array_push($products, new WC_Product($variation_post->ID));
+			}
+		}
+		
 		logthis("sync_products starting...");
 		foreach ($products as $product) {
 			logthis('sync_products Product ID: ' . $product->id);
