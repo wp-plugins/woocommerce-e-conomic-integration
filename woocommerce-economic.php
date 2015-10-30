@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.9.5
+ * Version: 1.9.6
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -260,30 +260,47 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			
 			if(isset($_POST['supportForm']) && $_POST['supportForm'] ==  "support"){
 				$options = get_option('woocommerce_economic_general_settings');
+				//echo array_key_exists('activate-oldordersync', $options)? 'key exist' : 'key doesnt exist';
 				$order_options = get_option('woocommerce_economic_order_settings');
 				$message .= '<tr><td align="right" colspan="1"><strong>Allmänna inställningar</strong></td></tr>';
-				$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.array_key_exists('license-key', $options)? $options['license-key'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Token ID: </td><td align="left">'.array_key_exists('token', $options)? $options['token'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Activate all orders sync: </td><td align="left">'.array_key_exists('activate-allsync', $options)? $options['activate-allsync'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Activate old orders sync: </td><td align="left">'.array_key_exists('activate-oldordersync', $options)? $options['activate-oldordersync'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Activate product sync: </td><td align="left">'.array_key_exists('product-sync', $options)? $options['product-sync'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Run scheduled product stock sync: </td><td align="left">'.array_key_exists('scheduled-product-sync', $options)? $options['scheduled-product-sync'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Create: </td><td align="left">'.array_key_exists('sync-order-invoice', $options)? $options['sync-order-invoice'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Produktgrupp: </td><td align="left">'.array_key_exists('product-group', $options)? $options['product-group'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Produkt prefix: </td><td align="left">'.array_key_exists('product-prefix', $options)? $options['product-prefix'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Kundgrupp: </td><td align="left">'.array_key_exists('customer-group', $options)? $options['customer-group'] : NULL.'</td></tr>';
-				$message .= '<tr><td align="right">Aktivera alla beställningar synkning: </td><td align="left">'.array_key_exists('activate-allsync', $options)? $options['activate-allsync'] : NULL.'</td></tr>';
+				if(array_key_exists('license-key', $options)){
+					$message .= '<tr><td align="right">License Nyckel: </td><td align="left">'.$options['license-key'].'</td></tr>';
+				}
+				if(array_key_exists('token', $options)){
+					$message .= '<tr><td align="right">Token ID: </td><td align="left">'.$options['token'].'</td></tr>';
+				}
+				if(array_key_exists('activate-allsync', $options)){
+					$message .= '<tr><td align="right">Activate all orders sync: </td><td align="left">'.$options['activate-allsync'].'</td></tr>';
+				}
+				if(array_key_exists('activate-oldordersync', $options)){
+					$message .= '<tr><td align="right">Activate old orders sync: </td><td align="left">'.$options['activate-oldordersync'].'</td></tr>';
+				}
+				if(array_key_exists('product-sync', $options)){
+					$message .= '<tr><td align="right">Activate product sync: </td><td align="left">'.$options['product-sync'].'</td></tr>';
+				}
+				if(array_key_exists('scheduled-product-sync', $options)){
+					$message .= '<tr><td align="right">Run scheduled product stock sync: </td><td align="left">'.$options['scheduled-product-sync'].'</td></tr>';
+				}
+				if(array_key_exists('sync-order-invoice', $options)){
+					$message .= '<tr><td align="right">Create: </td><td align="left">'.$options['sync-order-invoice'].'</td></tr>';
+				}
+				if(array_key_exists('product-group', $options)){
+					$message .= '<tr><td align="right">Product group: </td><td align="left">'.$options['product-group'].'</td></tr>';
+				}
+				if(array_key_exists('product-prefix', $options)){
+					$message .= '<tr><td align="right">Product prefix: </td><td align="left">'.$options['product-prefix'].'</td></tr>';
+				}
+				if(array_key_exists('order-reference-prefix', $options)){
+					$message .= '<tr><td align="right">Order reference prefix: </td><td align="left">'.$options['order-reference-prefix'].'</td></tr>';
+				}
 			}
-			
-			$message .= '</table></html></body>';
-	
-			
+			$message .= '</table></html></body>';			
 			$headers = "MIME-Version: 1.0\r\n";
 			$headers .= "Content-type: text/html; charset=utf-8 \r\n";
 			//$headers .= "From:".get_option('admin_email')."\r\n";
 			
             echo wp_mail( 'support@wooconomics.com', 'e-conomic Support', $message , $headers) ? "success" : "error";
-            //die(); // this is required to return a proper result
+            die(); // this is required to return a proper result
         }
 		
 		
@@ -550,7 +567,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						logthis("woo_save_invoice_to_economic order: " . $order_id . " sync failed, please try again after sometime!");
 					}
 				}else{
-					if($wce_api->save_order_to_economic($user, $order, $client, false)){
+					if($wce_api->save_order_to_economic($client, $user, $order, false)){
 						logthis("woo_save_order_to_economic order: " . $order_id . " is synced with economic");
 					}
 					else{
@@ -789,7 +806,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', 1.95);
+			update_option('economic_version', 1.96);
 			update_option('woo_save_object_to_economic', true);
 		}
 		
@@ -826,7 +843,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			if(floatval($economic_version) < 1.7 ){
 				$wpdb->query("ALTER TABLE ".$wce_customers." ADD email VARCHAR(320) DEFAULT NULL AFTER customer_number");
 			}
-			update_option('economic_version', 1.95);
+			update_option('economic_version', 1.96);
 			update_option('woo_save_object_to_economic', true);
 		}
 		
@@ -1228,6 +1245,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					add_settings_field( 'woocommerce-economic-product-prefix', __('Product prefix', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'product-prefix', 'tab_key' => $this->general_settings_key, 'key' => 'product-prefix', 'desc' => __('Prefix added to the products stored to e-conomic from woocommerce', 'woocommerce-e-conomic-integration')) );
 					
 					add_settings_field( 'woocommerce-economic-customer-group', __('Customer group', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_group' ), $this->general_settings_key, 'section_general', array ( 'id' => 'customer-group', 'tab_key' => $this->general_settings_key, 'key' => 'customer-group', 'desc' => __('e-conomic customer group to which new customers are added.', 'woocommerce-e-conomic-integration')) );
+					
+					add_settings_field( 'woocommerce-economic-order-reference-prefix', __('Order reference prefix', 'woocommerce-e-conomic-integration'), array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'order-reference-prefix', 'tab_key' => $this->general_settings_key, 'key' => 'order-reference-prefix', 'desc' => __('Prefix added to the order reference of an Order synced to e-conomic from woocommerce', 'woocommerce-e-conomic-integration')) );
 				}
 				//add_settings_field( 'woocommerce-economic-customer-prefix', 'Kund prefix', array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'customer-prefix', 'tab_key' => $this->general_settings_key, 'key' => 'customer-prefix', 'desc' => 'Prefix läggs till kunder sparade till e-conomic från woocommerce') );
 				//add_settings_field( 'woocommerce-economic-shipping-id', 'Frakt produktnummer', array( &$this, 'field_option_text' ), $this->general_settings_key, 'section_general', array ( 'id' => 'shipping-product-id', 'tab_key' => $this->general_settings_key, 'key' => 'shipping-product-id', 'desc' => 'Denna produkt numret läggs till alla fakturor som produktnummer för sjöfarten') );

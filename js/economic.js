@@ -88,12 +88,11 @@ function sync_shippings(sync_message) {
 function send_support_mail(form) {
     var data = jQuery('form#'+form).serialize();
     jQuery.post(ajaxurl, data, function(response) {
-		alert("Message sent successfully!");
-        /*if(response == "success0"){
+        if(response == "success"){
 			alert("Message sent successfully!");
 		}else{
 			alert("Problem sending message, please try again later.");
-		}*/
+		}
     });
 }
 

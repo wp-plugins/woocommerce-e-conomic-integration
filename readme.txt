@@ -7,8 +7,8 @@ Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
 Tested up to:      4.3
-Stable tag:        1.9.5
-Version:           1.9.5
+Stable tag:        1.9.6
+Version:           1.9.6
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
@@ -93,6 +93,10 @@ Read the FAQ or business hours mail support except weekends and holidays.
 http://wooconomics.com/category/faq/
 
 == Changelog ==
+
+= 1.9.6 =
+* Prefix for order reference is added to identify from which store an Order is synced to e-conomic. This feature is usefull to sync orders from multiple online stores to a single e-conomic account with reference.
+* Bug fixes.
 
 = 1.9.5 =
 * WooConomics now supports Variable products.

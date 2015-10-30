@@ -2,7 +2,7 @@
 //php.ini overriding necessary for communicating with the SOAP server.
 //ini_set('display_errors',1);
 //ini_set('display_startup_errors',1);
-//error_reporting(1);
+//error_reporting(0);
 if ( ! function_exists( 'logthis' ) ) {
     function logthis($msg) {
         if(TESTING){
@@ -72,6 +72,9 @@ class WCE_API{
     public $activate_oldordersync;
 	
 	public $product_sync;
+	
+	/** @public alphanumber corresponding the order referernce offset */
+    public $order_reference_prefix;
 	
 	
 	/** @public array including all the customer meta fiedls that are snyned */
@@ -164,6 +167,7 @@ class WCE_API{
 		$this->activate_oldordersync = isset($options['activate-oldordersync'])? $options['activate-oldordersync'] : '';
 		$this->product_sync = isset($options['product-sync'])? $options['product-sync'] : '';
 		$this->sync_order_invoice = isset($options['sync-order-invoice'])? $options['sync-order-invoice'] : '';
+		$this->order_reference_prefix = isset($options['order-reference-prefix'])? $options['order-reference-prefix'] : '';
 		//$this->customer_offset = $options['customer-prefix'];
 		
 		$this->product_lock = false;
@@ -459,87 +463,29 @@ class WCE_API{
      */
 	public function save_invoice_to_economic(SoapClient &$client, WP_User $user = NULL, WC_Order $order = NULL, $refund = NULL){
 		global $wpdb;
-		logthis("save_invoice_to_economic Getting debtor handle");
-		
-		$debtor_handle = $this->woo_get_debtor_handle_from_economic($client, $user, $order);
-		
-		if (!($debtor_handle)) {
-			logthis("save_invoice_to_economic debtor not found, can not create invoice");
-			return false;
-		}
-		try {
-		
-			$invoice_number = $this->woo_get_invoice_number_from_economic($client, $order->id);
-			if ($refund && isset($invoice_number)) {
-				logthis("save_invoice_to_economic invoice already exists");
-				return true;
-			}
+		try{
+			$current_invoice_handle = $client->CurrentInvoice_FindByOtherReference(array(
+				'otherReference' => $this->order_reference_prefix.$order->id
+			))->CurrentInvoice_FindByOtherReferenceResult;
 			
-			$current_invoice_handle = $this->woo_get_current_invoice_from_economic($client, $order->id, $debtor_handle);
-			logthis("save_invoice_to_economic woo_get_current_invoice_from_economic returned current invoice handle.");
-			logthis($current_invoice_handle);
-			
-			$countries = new WC_Countries();
-			
-			$address = null;
-			$city = null;
-			$postalcode = null;
-			$country = null;
-			
-			if (isset($order->shipping_address_1) || !empty($order->shipping_address_1)) {
-				$formatted_state = $countries->states[$order->shipping_country][$order->shipping_state];
-				$address = trim($order->shipping_address_1 . "\n" . $order->shipping_address_2 . "\n" . $formatted_state);
-				$city = $order->shipping_city;
-				$postalcode = $order->shipping_postcode;
-				$country = $countries->countries[$order->shipping_country];
-			} else {
-				$formatted_state = $countries->states[$order->billing_country][$order->billing_state];
-				$address = trim($order->billing_address_1 . "\n" . $order->billing_address_2 . "\n" . $formatted_state);
-				$city = $order->billing_city;
-				$postalcode = $order->billing_postcode;
-				$country = $countries->countries[$order->billing_country];
-			}
-			
-			
-			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryAddress.");
-			$client->CurrentInvoice_SetDeliveryAddress(array(
-				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
-				'value' => $address
-			));
-			
-			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryCity.");
-			$client->CurrentInvoice_SetDeliveryCity(array(
-				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
-				'value' => $city
-			));
-			
-			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryPostalCode.");
-			$client->CurrentInvoice_SetDeliveryPostalCode(array(
-				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
-				'value' => $postalcode
-			));
-			
-			logthis("save_invoice_to_economic CurrentInvoice_SetDeliveryCountry.");
-			$client->CurrentInvoice_SetDeliveryCountry(array(
-				'currentInvoiceHandle' => array('Id' => $current_invoice_handle->Id),
-				'value' => $country
-			));
-			
-			
-			logthis("save_invoice_to_economic call woo_handle_invoice_lines_to_economic.");			
-			$this->woo_handle_invoice_lines_to_economic($order, $current_invoice_handle, $client, $refund);
-			
-			
-			
-			//logthis("SELECT * FROM wce_orders WHERE order_id=".$order->id.": ".$wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";"));
-		
-			if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
-				$wpdb->update ("wce_orders", array('synced' => 1), array('order_id' => $order->id), array('%d'), array('%d'));
+			if (!isset($current_invoice_handle->CurrentInvoiceHandle->Id)) {
+				$order_handle = $this->save_order_to_economic($client, $user, $order, $refund);
+				$current_invoice_handle = $client->Order_UpgradeToInvoice(array(
+					'orderHandle' => $order_handle
+				))->Order_UpgradeToInvoiceResult;
+				logthis($current_invoice_handle);
+				
+				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
+					$wpdb->update ("wce_orders", array('synced' => 1), array('order_id' => $order->id), array('%d'), array('%d'));
+				}else{
+					$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 1), array('%d', '%d'));
+				}
 			}else{
-				$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 1), array('%d', '%d'));
+				logthis("save_invoice_to_economic: Current invoice already created");
+				logthis($current_invoice_handle);
 			}
 			return true;
-		} catch (Exception $exception) {
+		}catch (Exception $exception) {
 			logthis("save_invoice_to_economic could not save order: " . $exception->getMessage());
 			$this->debug_client($client);
 			logthis('Could not create invoice.');
@@ -746,182 +692,8 @@ class WCE_API{
 		}
 	}
 	
-	/**
-     * Get invoice number from economic
-     *
-     * @access public
-     * @param User object, SOAP client
-     * @return debtor_handle object
-     */	
-	public function woo_get_invoice_number_from_economic(SoapClient &$client, $reference){
-		$handles = $client->Invoice_FindByOtherReference(array(
-			'otherReference' => $reference
-		))->Invoice_FindByOtherReferenceResult;
-		
-		$invoice_handle = null;
-		foreach ($handles as $handle) {
-			if (is_object($handle)) {
-				$invoice_handle = $handle;
-				logthis("woo_get_invoice_number_from_economic handle is object number: " . $invoice_handle->Number);
-			}
-			if (is_array($handle)) {
-				foreach ($handle as $ihandle) {
-					$invoice_handle = $ihandle;
-					logthis("woo_get_invoice_number_from_economic handle is array number: " . $invoice_handle->Number);
-					break;
-				}
-			}
-		}
-		
-		if (isset($invoice_handle))
-			logthis("woo_get_invoice_number_from_economic invoice " . $invoice_handle->Number . " exists");
-		else
-			logthis("woo_get_invoice_number_from_economic doesn't exist for ref. " . $reference);
-		
-		return $invoice_handle;
-	}
 	
-	/**
-     * Get current invoice from economic
-     *
-     * @access public
-     * @param User object, SOAP client
-     * @return current invoice handle object
-     */	
-	public function woo_get_current_invoice_from_economic(SoapClient &$client, $reference, &$debtor_handle){
-		$current_invoice_handle = $client->CurrentInvoice_FindByOtherReference(array(
-			'otherReference' => $reference
-		))->CurrentInvoice_FindByOtherReferenceResult;
-		
-		if (!isset($current_invoice_handle->CurrentInvoiceHandle->Id)) {
-			logthis("woo_get_current_invoice_from_economic create CurrentInvoiceHandle.");
-			$current_invoice_handle = $client->CurrentInvoice_Create(array(
-				'debtorHandle' => $debtor_handle
-			))->CurrentInvoice_CreateResult;
-			$client->CurrentInvoice_SetOtherReference(array(
-				'currentInvoiceHandle' => $current_invoice_handle,
-				'value' => $reference
-			));
-			logthis("woo_get_current_invoice_from_economic current invoice handle created is: " . $current_invoice_handle->Id);
-			return $current_invoice_handle;
-		}
-		//logthis("current_invoice_handle: ".$current_invoice_handle);
-		logthis("woo_get_current_invoice_from_economic invoice handle found and ID is: ".$current_invoice_handle->CurrentInvoiceHandle->Id);
-		return $current_invoice_handle->CurrentInvoiceHandle;
-	}
-	
-	
-	/**
-     * Get order lines handle
-     *
-     * @access public
-     * @param Order object, Invoice handle object, SOAP client, refund bool
-     * @return debtor_handle object
-     */	
-	public function woo_handle_invoice_lines_to_economic(WC_Order $order, $current_invoice_handle, SoapClient &$client, $refund){
-	  logthis("woo_handle_invoice_lines_to_economic - get all lines");
-	
-	  foreach ($order->get_items() as $item) {
-		$product = $order->get_product_from_item($item);
-		//$line = $lines[$this->woo_get_product_sku($product)];
-		$current_invoice_line_handle = null;
-		$current_invoice_line_handle = $this->woo_create_currentinvoice_orderline_at_economic($current_invoice_handle, $this->woo_get_product_sku($product), $client);
-	
-		logthis("woo_handle_invoice_lines_to_economic updating qty on id: " . $current_invoice_line_handle->Id . " number: " . $current_invoice_line_handle->Number);
-		$quantity = ($refund) ? $item['qty'] * -1 : $item['qty'];
-		$client->CurrentInvoiceLine_SetQuantity(array(
-		  'currentInvoiceLineHandle' => $current_invoice_line_handle,
-		  'value' => $quantity
-		));
-		logthis("woo_handle_invoice_lines_to_economic updated line");
-	  }
-	  
-	    $shippingItem = reset($order->get_items('shipping'));
-		//logthis($shippingItem['method_id']);
-		if(isset($shippingItem['method_id'])){
-			logthis("woo_handle_invoice_lines_to_economic adding Shipping line");
-			$current_invoice_line_handle = null;
-			$current_invoice_line_handle = $this->woo_create_currentinvoice_orderline_at_economic($current_invoice_handle, $shippingItem['method_id'], $client);
-			logthis("woo_handle_invoice_lines_to_economic updating qty on id: " . $current_invoice_line_handle->Id . " number: " . $current_invoice_line_handle->Number);
-			$quantity = ($refund) ? $item['qty'] * -1 : 1;
-			$client->CurrentInvoiceLine_SetQuantity(array(
-			'currentInvoiceLineHandle' => $current_invoice_line_handle,
-			'value' => $quantity
-			));
-			logthis("woo_handle_invoice_lines_to_economic updated shipping line");
-		}
-		
-	  
-	  
-	  //Setting order percent to current invoice line
-	  /*if($order->get_total_discount() > 0){
-	  	$orderPercent = ($order->get_total() * $order->get_total_discount())/100;
-		logthis("woo_handle_orderlines_to_economic set discount percent!");
-		$client->CurrentInvoiceLine_SetDiscountAsPercent(array(
-		  'currentInvoiceLineHandle' => $current_invoice_line_handle,
-		  'value' => $orderPercent
-		));
-	  }*/
-	  
-	
-	  /*if (empty($line_handles)) {
-		logthis("woo_handle_orderlines_to_economic adding shipping order line: " . $shipping_product_id);
-		$handle = $this->woo_create_currentinvoice_orderline_at_economic($current_invoice_handle, $shipping_product_id, $client);
-		$client->CurrentInvoiceLine_SetQuantity(array(
-		  'currentInvoiceLineHandle' => $handle,
-		  'value' => 1
-		));
-	
-	  }*/
-	}
-	
-	public function woo_get_currentinvoice_orderline_from_economic(&$handle, SoapClient &$client){
-	  logthis("woo_get_currentinvoice_orderline_from_economic id: " . $handle->Id . " numbner: " . $handle->Number);
-	  $invoice_line = $client->CurrentInvoiceLine_GetData(array(
-		'entityHandle' => $handle
-	  ))->CurrentInvoiceLine_GetDataResult;
-	
-	  return $invoice_line;
-	}
-	
-	
-	/**
-     * Get invoice lines to e-conomic 
-     *
-     * @access public
-     * @param 
-     * @return array log
-     */
-	public function woo_create_currentinvoice_orderline_at_economic($current_invoice_handle, $product_id, SoapClient &$client){
-		$current_invoice_line_handle = $client->CurrentInvoiceLine_Create(array(
-			'invoiceHandle' => array('Id' => $current_invoice_handle->Id)
-		))->CurrentInvoiceLine_CreateResult;
-		logthis("woo_create_currentinvoice_orderline_at_economic added line id: " . $current_invoice_line_handle->Id . " number: " . $current_invoice_line_handle->Number . " product_id: " . $product_id);
-		$product_handle = $client->Product_FindByNumber(array(
-			'number' => $product_id
-		))->Product_FindByNumberResult;
-		$client->CurrentInvoiceLine_SetProduct(array(
-			'currentInvoiceLineHandle' => $current_invoice_line_handle,
-			'valueHandle' => $product_handle
-		));
-		$product = $client->Product_GetData(array(
-			'entityHandle' => $product_handle
-		))->Product_GetDataResult;
-		$client->CurrentInvoiceLine_SetDescription(array(
-			'currentInvoiceLineHandle' => $current_invoice_line_handle,
-			'value' => $product->Name
-		));
-		$client->CurrentInvoiceLine_SetUnitNetPrice(array(
-			'currentInvoiceLineHandle' => $current_invoice_line_handle,
-			'value' => $product->SalesPrice
-		));
-		
-		logthis("woo_create_currentinvoice_orderline_at_economic added product to line ");
-		return $current_invoice_line_handle;
-	}
-	
-	
-	    /**
+	 /**
      * Save WooCommerce Order to e-conomic
      *
      * @access public
@@ -938,7 +710,7 @@ class WCE_API{
 		}
 		try {
 		
-			$order_handle = $this->woo_get_order_number_from_economic($client, $order->id, $debtor_handle);
+			$order_handle = $this->woo_get_order_number_from_economic($client, $this->order_reference_prefix.$order->id, $debtor_handle);
 			if (!$refund && isset($invoice_number)) {
 				logthis("save_order_to_economic order already exists");
 				return true;
@@ -1021,7 +793,7 @@ class WCE_API{
 			}else{
 				$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 1), array('%d', '%d'));
 			}
-			return true;
+			return $order_handle;
 		} catch (Exception $exception) {
 			logthis("save_order_to_economic could not save order: " . $exception->getMessage());
 			$this->debug_client($client);
@@ -1048,10 +820,11 @@ class WCE_API{
 			'otherReference' => $reference
 		))->Order_FindByOtherReferenceResult;
 		
+		//logthis('order reference: '.$reference);
 		//logthis($economic_order);
 	
 		if(isset($economic_order->OrderHandle->Id) && !empty($economic_order->OrderHandle->Id)){
-			logthis("woo_get_order_number_from_economic orderId " . $economic_order->Id . " exists");
+			logthis("woo_get_order_number_from_economic orderId " . $economic_order->OrderHandle->Id . " exists");
 			return $economic_order->OrderHandle;
 		}else{
 			logthis("woo_get_order_number_from_economic order doesn't exists, creating new order!");
@@ -2145,7 +1918,7 @@ class WCE_API{
 	public function send_invoice_economic(SoapClient &$client, WC_Order $order = NULL){
 		try{
 			$current_invoice_handle = $client->CurrentInvoice_FindByOtherReference(array(
-				'otherReference' => $order->id
+				'otherReference' => $this->order_reference_prefix.$order->id
 			))->CurrentInvoice_FindByOtherReferenceResult;
 			
 			logthis('send_invoice_economic CurrentInvoiceHandleId:'. $current_invoice_handle->CurrentInvoiceHandle->Id);
