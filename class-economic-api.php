@@ -2,7 +2,7 @@
 //php.ini overriding necessary for communicating with the SOAP server.
 //ini_set('display_errors',1);
 //ini_set('display_startup_errors',1);
-//error_reporting(0);
+//error_reporting(1);
 if ( ! function_exists( 'logthis' ) ) {
     function logthis($msg) {
         if(TESTING){
@@ -470,10 +470,16 @@ class WCE_API{
 			
 			if (!isset($current_invoice_handle->CurrentInvoiceHandle->Id)) {
 				$order_handle = $this->save_order_to_economic($client, $user, $order, $refund);
+				
+				if(!$order_handle){
+					$debtor_handle = $this->woo_get_debtor_handle_from_economic($client, $user, $order);
+					$order_handle = $this->woo_get_order_number_from_economic($client, $this->order_reference_prefix.$order->id, $debtor_handle);
+				}
+				
 				$current_invoice_handle = $client->Order_UpgradeToInvoice(array(
 					'orderHandle' => $order_handle
 				))->Order_UpgradeToInvoiceResult;
-				logthis($current_invoice_handle);
+				//logthis($current_invoice_handle);
 				
 				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
 					$wpdb->update ("wce_orders", array('synced' => 1), array('order_id' => $order->id), array('%d'), array('%d'));
@@ -483,6 +489,12 @@ class WCE_API{
 			}else{
 				logthis("save_invoice_to_economic: Current invoice already created");
 				logthis($current_invoice_handle);
+				
+				if($wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$order->id.";")){
+					$wpdb->update ("wce_orders", array('synced' => 1), array('order_id' => $order->id), array('%d'), array('%d'));
+				}else{
+					$wpdb->insert ("wce_orders", array('order_id' => $order->id, 'synced' => 1), array('%d', '%d'));
+				}
 			}
 			return true;
 		}catch (Exception $exception) {
@@ -585,6 +597,7 @@ class WCE_API{
 						'name' => $name,
 						'vatZone' => $vatZone
 					))->Debtor_CreateResult;
+					
 					update_user_meta($user->ID, 'debtor_number', $debtor_handle->Number);
 					logthis("woo_get_debtor_handle_from_economic debtor created using user object: " . $name);
 				}else{
@@ -603,6 +616,8 @@ class WCE_API{
 						'name' => $order->last_name.' '.$order->first_name,
 						'vatZone' => $vatZone
 					))->Debtor_CreateResult;
+					
+					update_user_meta($user->ID, 'debtor_number', $debtor_handle->Number);
 					logthis("woo_get_debtor_handle_from_economic debtor created using order object: " . $order->billing_email);
 				}
 				//logthis("woo_get_debtor_handle_from_economic debtor created for user->id " . $user != NULL? $user->ID : $order->billing_email);
@@ -610,7 +625,11 @@ class WCE_API{
 			
 			if(is_array($debtor_handle)){
 				$debtor_handle = $debtor_handle[0];
-			}
+			}	
+			$client->Debtor_SetCurrency(array(
+				'debtorHandle' => $debtor_handle,
+				'valueHandle' => array('Code' => get_option('woocommerce_currency'))
+			));		
 			return $debtor_handle;
 		}catch (Exception $exception) {
 			logthis("woo_get_debtor_handle_from_economic could get or create debtor handle: " . $exception->getMessage());
@@ -766,6 +785,13 @@ class WCE_API{
 				'orderHandle' => $order_handle,
 				'value' => $country
 			))->Order_GetLinesResult;
+			
+			//Add for version 1.9.7 by Alvin
+			//Set the currency of the e-conomic order based on the store Currency.
+			$client->Order_SetCurrency(array(
+				'orderHandle' => $order_handle,
+				'valueHandle' => array('Code' => get_option('woocommerce_currency'))
+			));
 			
 			//logthis($orderLines);
 			
@@ -1087,7 +1113,8 @@ class WCE_API{
 				return true;
 			}else{
 				// Update product data
-				$sales_price = $product->get_price_excluding_tax();
+				
+				$sales_price = $product->get_price_excluding_tax(1, $product->get_price());
 				$client->Product_UpdateFromData(array(
 				'data' => (object)array(
 				'Handle' => $product_data->Handle,

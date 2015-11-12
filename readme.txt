@@ -6,9 +6,9 @@ Tags:              WooCommerce, Order, E-Commerce, Accounting, Bookkeeping, invo
 Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
-Tested up to:      4.3
-Stable tag:        1.9.6
-Version:           1.9.6
+Tested up to:      4.3.1
+Stable tag:        1.9.8
+Version:           1.9.8
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
@@ -36,6 +36,7 @@ WooCommerce e-conomic integration plugin connects to license server hosted at ht
 	*	Shipping Country
 	*	Shipping City
 	*	Shipping Postcode
+	*   VAT Zone
 *	PRODUCT/ARTICLE:
 	*	Product name
 	*	ArticleNumber (SKU + product prefix)
@@ -53,15 +54,25 @@ WooCommerce e-conomic integration plugin connects to license server hosted at ht
 	*	Product quantity
 	*	Product Price
 	*	Shipping cost (as orderline - workaround) 
+	*	Currency
 
 Features of WooCommerce e-conomic Integration:
 
-1.	Automatic (and manual) sync of all Customers from WooCommerce to e-conomic invoicing service dashboard.
-2.	Automatic (and manual) sync of all Orders from WooCommerce to e-conomic invoicing service dashboard. Sync initiated when order status is changed to 'Completed'.
-3.	Automatic (and manual) sync of all products from WooCommerce to e-conomic invoicing service Items. This function also updates products data modified after initial sync. Supports variable products.
+1.	Automatic sync of all Customers from WooCommerce to e-conomic invoicing service dashboard.
+2.	Automatic sync of all Orders from WooCommerce to e-conomic invoicing service dashboard. Sync initiated when order status is changed to 'Completed'.
+3.	Automatic sync of all products from WooCommerce to e-conomic invoicing service Items. This function also updates products data modified after initial sync. Supports variable products.
 4.	Manual sync of all Shipping methods (excluding the additional cost for flat_shipping) from WooCommerce to e-conomic invoicing service dashboard.
 5.	Sync Order, Products, Customers to e-conomic when Order status is changed to 'Completed' at WooCommerce->Orders Management section.
 6.  Product stock quantity is imported from e-conomic to WooCommerce.
+7.  Sync orders created before wooconomics installation using "Activate old orders sync" option.
+8.  "Activate product sync" option syncs product information from WooCommerce to e-conomic. (Stock information is updated regardless of this setting)
+9.	In the plugin settings you will see the option "Run scheduled product stock sync" to select the cron frequence (daily, twice daily and hourly). This cron feature will fetch the stock data from e-conomic and update the stock data in woocommerce for a product.
+10. Using "Product group" option, new products from the selected group are added at e-conomic product group.         
+11. Prefix added to the products stored from woocommerce to e-conomic using "Product prefix" option.
+12. New customers are added at e-conomic customer group using "Customer group" option(domestic, european and overseas).
+13. Multishop support. Use "Order reference prefix" to add a prefix to the order reference of an Order synced from woocommerce to e-conomic.
+14. Manual sync of all Products and Customers data from WooCommerce send to e-conomic using "WooCommerce to e-conomic". Manual sync of all Products and Customers data from e-conomic saved at WooCommerce using "e-conomic to WooCommerce". Choose this option before using "Manual sync contacts" and "Manual sync products" option, default will be WooCommerce to e-conomic.
+15. Multishop support. Support for multiple stores with different currency. Option to use base currency setting in e-conomic (default setting) or use currency setup in WooCommerce.
 
 == Plugin Requirement ==
 
@@ -94,8 +105,15 @@ http://wooconomics.com/category/faq/
 
 == Changelog ==
 
+= 1.9.8 =
+* Bug fixes.
+
+= 1.9.7 =
+* Multishop support: Support for multiple stores with different currency. Option to use base currency setting in e-conomic (default setting) or use currency setup in WooCommerce.
+* Bug fixes.
+
 = 1.9.6 =
-* Prefix for order reference is added to identify from which store an Order is synced to e-conomic. This feature is usefull to sync orders from multiple online stores to a single e-conomic account with reference.
+* Multishop support: Prefix for order reference is added to identify from which store an Order is synced to e-conomic. This feature is usefull to sync orders from multiple online stores to a single e-conomic account with reference.
 * Bug fixes.
 
 = 1.9.5 =
