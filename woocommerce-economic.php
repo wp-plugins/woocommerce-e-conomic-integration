@@ -4,7 +4,7 @@
  * Plugin URI: http://plugins.svn.wordpress.org/woocommerce-e-conomic-integration/
  * Description: An e-conomic API Interface. Synchronizes products, orders, Customers and more to e-conomic.
  * Also fetches inventory from e-conomic and updates WooCommerce
- * Version: 1.9.8
+ * Version: 1.9.9
  * Author: wooconomics
  * Text Domain: woocommerce-e-conomic-integration
  * Author URI: www.wooconomics.com
@@ -430,6 +430,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		//Save product to economic from woocommerce.
 		add_action('save_post', 'woo_save_object_to_economic', 2, 2);
 		function woo_save_object_to_economic( $post_id, $post) {
+			global $wpdb;
 			if(!get_option('woo_save_object_to_economic')){
 				logthis("woo_save_object_to_economic existing because disabled!");
 				return;
@@ -461,6 +462,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			
 			if($post->post_type == 'shop_order' && $post->post_status != 'auto-draft' && $post->post_status != 'wc-cancelled'){
 				$order = new WC_Order($post_id);
+				if($order->payment_method == 'economic-invoice' && $wpdb->query ("SELECT * FROM wce_orders WHERE order_id=".$post_id." AND synced=1")){
+					logthis('woo_save_customer_to_economic exiting, because an already invoiced order is being saved');
+					return;
+				}
 				if($order->billing_first_name == ''){
 					logthis('woo_save_customer_to_economic exiting, because order data is empty.');
 					//logthis($order);
@@ -806,7 +811,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
             dbDelta( $sql );
 			
-			update_option('economic_version', 1.98);
+			update_option('economic_version', 1.99);
 			update_option('woo_save_object_to_economic', true);
 		}
 		
@@ -843,7 +848,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			if(floatval($economic_version) < 1.7 ){
 				$wpdb->query("ALTER TABLE ".$wce_customers." ADD email VARCHAR(320) DEFAULT NULL AFTER customer_number");
 			}
-			update_option('economic_version', 1.98);
+			update_option('economic_version', 1.99);
 			update_option('woo_save_object_to_economic', true);
 		}
 		

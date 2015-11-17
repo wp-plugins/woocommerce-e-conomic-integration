@@ -7,8 +7,8 @@ Author URI:        www.wooconomics.com
 Author:            wooconomics
 Requires at least: 3.8
 Tested up to:      4.3.1
-Stable tag:        1.9.8
-Version:           1.9.8
+Stable tag:        1.9.9
+Version:           1.9.9
 
 WooCommerce e-conomic integration synchronizes your WooCommerce Orders, Customers and Products to your e-conomic account.
 
@@ -104,6 +104,9 @@ Read the FAQ or business hours mail support except weekends and holidays.
 http://wooconomics.com/category/faq/
 
 == Changelog ==
+
+= 1.9.9 =
+* Bug fixes.
 
 = 1.9.8 =
 * Bug fixes.
